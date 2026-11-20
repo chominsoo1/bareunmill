@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAF4EA">
+<title>제빵 원가 계산기 · 개당 원가·마진</title>
+<meta name="description" content="재료 구매단가에서 g당 단가, 배치 재료비, 로스율, 포장비를 반영해 개당 원가와 원가율·마진을 바로 계산하는 제빵사용 원가 계산기.">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+  *,*::before,*::after{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0 auto;max-width:520px;padding:0 12px calc(18px + env(safe-area-inset-bottom));
+    background:#FAF4EA;color:#3D2B1F;font-size:14px;line-height:1.4;
+    font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+    -webkit-tap-highlight-color:transparent;overflow-x:hidden;
+    word-break:keep-all;overflow-wrap:break-word;
+  }
+  button{font-family:inherit;}
+
+  /* ── 헤더 ── */
+  .hero{padding:14px 2px 9px;}
+  .hero h1{font-size:19px;font-weight:800;letter-spacing:-.6px;margin:0;display:flex;align-items:center;gap:6px;}
+  .hero h1 span{font-size:9.5px;font-weight:800;letter-spacing:.10em;color:#8A5A2B;background:#EADCC7;
+    border-radius:999px;padding:3px 7px;transform:translateY(-1px);}
+  .hero p{margin:3px 0 0;font-size:11px;color:#9C8871;letter-spacing:-.1px;}
+
+  /* ── 프리셋 칩 바 ── */
+  .bar{display:flex;gap:5px;margin-bottom:9px;}
+  .pchip{flex:1;min-width:0;height:29px;padding:0 4px;border-radius:999px;
+    border:1px solid #E3D3BE;background:#FFFEFB;color:#6B5844;
+    font-size:11.5px;font-weight:700;letter-spacing:-.3px;white-space:nowrap;
+    cursor:pointer;transition:background .15s,color .15s,border-color .15s;}
+  .pchip.on{background:#3D2B1F;border-color:#3D2B1F;color:#FBF3E6;}
+  .pchip.reset{color:#A2703F;border-style:dashed;}
+
+  /* ── 요약 ── */
+  .sum{background:linear-gradient(158deg,#3D2B1F 0%,#513728 58%,#6A452F 100%);color:#FBF3E6;
+    border-radius:14px;padding:11px 11px 9px;margin-bottom:9px;box-shadow:0 6px 16px rgba(61,43,31,.16);}
+  .sum-row{display:grid;grid-template-columns:1.18fr 1fr 1fr;gap:6px;align-items:end;}
+  .cell{min-width:0;}
+  .cell .lbl{display:block;font-size:9.5px;color:#C2AB90;letter-spacing:.01em;margin-bottom:1px;white-space:nowrap;}
+  .cell .num{display:flex;align-items:baseline;gap:1px;line-height:1.05;}
+  .cell strong{font-size:16px;font-weight:800;letter-spacing:-.5px;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .cell em{font-style:normal;font-size:10.5px;font-weight:700;color:#D9C3A6;}
+  .cell.main strong{font-size:25px;letter-spacing:-1.1px;}
+  .cell.main em{font-size:12px;}
+  .cell.good strong{color:#A9DBB6;}
+  .cell.warn strong{color:#F6BE96;}
+  .cell.bad strong{color:#F3A087;}
+  .sum-sub{margin-top:7px;padding-top:6px;border-top:1px solid rgba(255,255,255,.12);
+    font-size:10px;color:#BFA88E;letter-spacing:-.1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sum-sub b{color:#F0DFC6;font-weight:800;}
+  .sum-rec{margin-top:2px;font-size:9.5px;color:#A8927A;letter-spacing:-.1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sum-rec b{color:#D9C3A6;font-weight:700;}
+
+  /* ── 박스 ── */
+  .box{background:#FFFDF8;border:1px solid #EBDCC6;border-radius:14px;padding:10px 10px;
+    margin-bottom:9px;box-shadow:0 1px 6px rgba(61,43,31,.04);}
+
+  /* ── 배치 설정 2×2 ── */
+  .grid4{display:grid;grid-template-columns:1fr 1fr;gap:7px 8px;}
+  .grid4 label{display:block;min-width:0;}
+  .grid4 .lbl{display:block;font-size:10px;font-weight:700;color:#84705B;margin-bottom:3px;letter-spacing:-.2px;}
+  .inp{display:flex;align-items:center;background:#FFFEFB;border:1px solid #E3D3BE;border-radius:9px;
+    padding:0 8px;height:40px;transition:border-color .15s,box-shadow .15s;}
+  .inp:focus-within{border-color:#B4703B;box-shadow:0 0 0 3px rgba(180,112,59,.12);}
+  .inp input{flex:1;min-width:0;width:100%;border:0;background:transparent;outline:none;
+    font-family:inherit;font-size:16px;font-weight:700;color:#3D2B1F;text-align:right;padding:0;
+    font-variant-numeric:tabular-nums;}
+  .inp input::placeholder{color:#CBBBA6;font-weight:600;font-size:13px;}
+  .inp i{font-style:normal;font-size:10.5px;color:#9C8871;margin-left:4px;font-weight:700;}
+
+  .wlink{display:inline-block;margin-top:6px;background:none;border:0;padding:0;
+    font-size:10.5px;font-weight:700;color:#A2703F;letter-spacing:-.2px;cursor:pointer;}
+  .wrow{display:none;gap:6px;align-items:center;margin-top:6px;}
+  .wrow.open{display:flex;}
+  .wrow .inp{flex:1;height:34px;padding:0 7px;}
+  .wrow .inp input{font-size:15px;}
+  .wrow .inp input::placeholder{font-size:12px;}
+  .wrow button{flex:0 0 auto;height:34px;padding:0 11px;border:0;border-radius:9px;background:#3D2B1F;
+    color:#FBF3E6;font-size:11.5px;font-weight:800;cursor:pointer;}
+  #weightHint{display:none;}
+
+  /* ── 재료 리스트 ── */
+  .list-head{display:flex;align-items:center;justify-content:space-between;gap:6px;
+    padding:0 1px 6px;border-bottom:1px solid #EFE3D2;margin-bottom:1px;}
+  .list-head span{font-size:10px;font-weight:700;color:#9C8871;letter-spacing:-.2px;}
+  .list-head b{font-size:12.5px;font-weight:800;color:#3D2B1F;font-variant-numeric:tabular-nums;}
+  .m{padding:5px 0 6px;border-bottom:1px dashed #EFE3D2;}
+  .m:last-child{border-bottom:0;}
+  .m1{display:flex;align-items:center;gap:6px;}
+  .m1 .in-name{flex:1;min-width:0;border:0;background:transparent;outline:none;
+    font-family:inherit;font-size:15px;font-weight:700;color:#3D2B1F;padding:0 0 0 1px;
+    text-overflow:ellipsis;}
+  .m1 .in-name::placeholder{color:#C4B49C;font-weight:600;font-size:13.5px;}
+  .m1 .in-name:focus{background:#FFFBF3;border-radius:5px;}
+  .m-cost{font-size:13px;font-weight:800;color:#7A4B25;font-variant-numeric:tabular-nums;
+    white-space:nowrap;letter-spacing:-.3px;}
+  .m-del{flex:0 0 auto;width:22px;height:22px;border:0;border-radius:5px;background:#F6EADA;
+    color:#B08968;font-size:11px;font-weight:800;line-height:1;cursor:pointer;padding:0;}
+  .m-del:active{background:#EBD9C2;}
+
+  .m2{display:flex;align-items:center;gap:5px;margin-top:4px;}
+  .f{display:flex;align-items:center;background:#FFFEFB;border:1px solid #E7D8C4;border-radius:7px;
+    height:31px;padding:0 6px;min-width:0;}
+  .f:focus-within{border-color:#B4703B;box-shadow:0 0 0 2px rgba(180,112,59,.10);}
+  .f input{flex:1;min-width:0;width:100%;border:0;background:transparent;outline:none;
+    font-family:inherit;font-size:15px;font-weight:700;color:#4A3626;text-align:right;padding:0;
+    font-variant-numeric:tabular-nums;}
+  .f input::placeholder{color:#CBBBA6;font-weight:600;font-size:12px;}
+  .f i{font-style:normal;font-size:9.5px;color:#A28F79;margin-left:3px;font-weight:700;}
+  .f.spec{flex:0 0 84px;}
+  .f.spec select{border:0;background:transparent;outline:none;font-family:inherit;font-size:10.5px;
+    font-weight:700;color:#8B7A69;padding:0 0 0 2px;margin-left:2px;-webkit-appearance:none;appearance:none;}
+  .f.price{flex:1 1 0;}
+  .f.usage{flex:1 1 0;}
+  .m-perg{flex:0 0 auto;font-size:9px;font-weight:700;color:#B3A08A;letter-spacing:-.2px;
+    font-variant-numeric:tabular-nums;white-space:nowrap;min-width:44px;text-align:right;}
+  .m-empty{padding:14px 0;text-align:center;font-size:11.5px;color:#A28F79;}
+
+  /* ── 하단 ── */
+  .notice{margin:0 1px 8px;font-size:9.5px;color:#A28F79;line-height:1.45;letter-spacing:-.1px;}
+  .btns{display:grid;grid-template-columns:1fr 1.25fr;gap:7px;}
+  .btn{height:42px;border-radius:11px;border:1px solid #E3D3BE;font-size:13px;font-weight:800;
+    letter-spacing:-.3px;cursor:pointer;}
+  .btn-add{background:#FFFEFB;color:#7A4B25;}
+  .btn-add:active{background:#F6EADA;}
+  .btn-copy{background:#3D2B1F;color:#FBF3E6;border-color:#3D2B1F;}
+  .btn-copy:active{background:#513728;}
+  .save{margin:7px 1px 0;font-size:9px;color:#B3A08A;text-align:center;letter-spacing:-.1px;}
+
+  .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,14px);
+    background:rgba(61,43,31,.96);color:#FBF3E6;font-size:12px;font-weight:700;padding:9px 15px;border-radius:999px;
+    opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:90;max-width:88vw;
+    text-align:center;box-shadow:0 6px 18px rgba(61,43,31,.25);}
+  .toast.show{opacity:1;transform:translate(-50%,0);}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>제빵 원가 계산기 <span>COST</span></h1>
+  <p>재료 단가와 판매가만 넣으면 개당 원가·마진이 바로 나옵니다.</p>
+</header>
+
+<div class="bar" id="presetBar">
+  <button class="pchip" type="button" data-p="salt">소금빵 예시</button>
+  <button class="pchip" type="button" data-p="sourdough">사워도우</button>
+  <button class="pchip" type="button" data-p="blank">빈 양식</button>
+  <button class="pchip reset" type="button" id="btnReset">초기화</button>
+</div>
+
+<section class="sum" id="summaryCard">
+  <div class="sum-row">
+    <div class="cell main" id="cellPer">
+      <span class="lbl">개당 원가</span>
+      <div class="num"><strong id="sumPerPiece">0</strong><em>원</em></div>
+    </div>
+    <div class="cell" id="cellRatio">
+      <span class="lbl">원가율</span>
+      <div class="num"><strong id="sumRatio">—</strong></div>
+    </div>
+    <div class="cell" id="cellProfit">
+      <span class="lbl">개당 마진</span>
+      <div class="num"><strong id="sumProfit">—</strong></div>
+    </div>
+  </div>
+  <div class="sum-sub" id="sumLossLine">1배치 총 재료비 <b>0원</b> → 로스 0% 반영 <b>0원</b></div>
+  <div class="sum-rec" id="sumRec">권장 판매가 · 25% — · 30% — · 35% —</div>
+</section>
+
+<section class="box">
+  <div class="grid4">
+    <label>
+      <span class="lbl">생산 수량</span>
+      <div class="inp"><input id="inQty" type="text" inputmode="numeric" autocomplete="off" placeholder="20" aria-label="생산 수량"><i>개</i></div>
+    </label>
+    <label>
+      <span class="lbl">판매가</span>
+      <div class="inp"><input id="inPrice" type="text" inputmode="numeric" autocomplete="off" placeholder="3500" aria-label="판매가"><i>원</i></div>
+    </label>
+    <label>
+      <span class="lbl">개당 포장비</span>
+      <div class="inp"><input id="inPack" type="text" inputmode="numeric" autocomplete="off" placeholder="100" aria-label="개당 포장비"><i>원</i></div>
+    </label>
+    <label>
+      <span class="lbl">로스율</span>
+      <div class="inp"><input id="inLoss" type="text" inputmode="decimal" autocomplete="off" placeholder="4" aria-label="로스율"><i>%</i></div>
+    </label>
+  </div>
+  <button class="wlink" type="button" id="btnWeight">반죽 무게로 수량 계산 ▾</button>
+  <div class="wrow" id="weightRow">
+    <div class="inp"><input id="inDough" type="text" inputmode="decimal" autocomplete="off" placeholder="총 반죽" aria-label="총 반죽 무게"><i>g</i></div>
+    <div class="inp"><input id="inPiece" type="text" inputmode="decimal" autocomplete="off" placeholder="분할" aria-label="분할 중량"><i>g</i></div>
+    <button type="button" id="btnApplyWeight">적용</button>
+  </div>
+  <span id="weightHint"></span>
+</section>
+
+<section class="box">
+  <div class="list-head">
+    <span id="matCount">재료 0종 · 사용량 0g</span>
+    <b id="matTotal">0원</b>
+  </div>
+  <div id="matList"></div>
+</section>
+
+<p class="notice">※ 표준 참고 예시이며, 실제 매장 단가·배합과 다릅니다.<br>재료·포장 원가만 계산합니다(인건비·임대료·전기·감가상각 제외).</p>
+
+<div class="btns">
+  <button class="btn btn-add" id="btnAdd" type="button">＋ 재료 추가</button>
+  <button class="btn btn-copy" id="btnCopy" type="button">원가 요약 복사</button>
+</div>
+<p class="save" id="saveState">입력한 내용은 이 폰 브라우저에만 자동 저장됩니다.</p>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  var $ = function(id){ return document.getElementById(id); };
+  var LS_KEY = 'breadCostCalc.v1';
+
+  /* ───────── 숫자 유틸 ───────── */
+  function num(v){
+    if(v === null || v === undefined) return 0;
+    var n = parseFloat(String(v).replace(/,/g,''));
+    return isFinite(n) ? n : 0;
+  }
+  function won(n){
+    if(!isFinite(n)) return '0';
+    return Math.round(n).toLocaleString('ko-KR');
+  }
+  function fmtUnit(n){
+    if(!isFinite(n) || n <= 0) return '—';
+    if(n < 10) return n.toFixed(2);
+    if(n < 100) return n.toFixed(1);
+    return Math.round(n).toLocaleString('ko-KR');
+  }
+  function addCommas(s){
+    if(s === '' || s === null || s === undefined) return '';
+    s = String(s);
+    var parts = s.split('.');
+    var int = parts[0].replace(/^0+(?=\d)/, '');
+    int = int.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.length > 1 ? int + '.' + parts[1] : int;
+  }
+  function nowHM(){
+    var d = new Date();
+    var h = d.getHours(), m = d.getMinutes();
+    return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
+  }
+
+  /* ───────── 프리셋 (표준 참고 예시) ───────── */
+  var PRESETS = {
+    salt: {
+      label: '소금빵 예시',
+      qty: 20, loss: 4, packaging: 100, price: 3500,
+      doughTotal: 1440, pieceWeight: 72,
+      materials: [
+        {name:'강력분',        spec:20,   unit:'kg', price:32000, usage:800},
+        {name:'정제수(물)',    spec:1,    unit:'L' , price:600,   usage:520},
+        {name:'무염버터',      spec:1,    unit:'kg', price:15000, usage:80},
+        {name:'설탕',          spec:3,    unit:'kg', price:4800,  usage:16},
+        {name:'소금',          spec:1,    unit:'kg', price:1200,  usage:12},
+        {name:'생이스트',      spec:1,    unit:'kg', price:9000,  usage:4},
+        {name:'탈지분유',      spec:1,    unit:'kg', price:13000, usage:8}
+      ]
+    },
+    sourdough: {
+      label: '사워도우 예시',
+      qty: 8, loss: 3, packaging: 350, price: 9800,
+      doughTotal: 2040, pieceWeight: 255,
+      materials: [
+        {name:'유기농 강력분',  spec:25,   unit:'kg', price:47500, usage:1000},
+        {name:'통밀가루',       spec:1,    unit:'kg', price:3800,  usage:100},
+        {name:'정제수(물)',     spec:1,    unit:'L' , price:600,   usage:720},
+        {name:'천연발효종(르방)', spec:500, unit:'g' , price:1500,  usage:200},
+        {name:'소금',           spec:1,    unit:'kg', price:1200,  usage:20}
+      ]
+    },
+    blank: {
+      label: '빈 양식',
+      qty: 20, loss: 4, packaging: 0, price: 0,
+      doughTotal: '', pieceWeight: '',
+      materials: [
+        {name:'', spec:'', unit:'kg', price:'', usage:''}
+      ]
+    }
+  };
+
+  /* 정제수 프리셋의 단위는 L 이지만 계산은 g 기준이므로 내부적으로 kg/g만 사용한다.
+     L은 1000g으로 취급(1L ≒ 1,000g). */
+  function unitGrams(unit){ return (unit === 'kg' || unit === 'L') ? 1000 : 1; }
+
+  var state = null;
+  var lastCalc = null;
+  var saveTimer = null;
+
+  function fromPreset(key){
+    var p = PRESETS[key];
+    return {
+      preset: key,
+      qty: String(p.qty),
+      loss: String(p.loss),
+      packaging: String(p.packaging),
+      price: String(p.price),
+      target: 30,
+      doughTotal: String(p.doughTotal === undefined ? '' : p.doughTotal),
+      pieceWeight: String(p.pieceWeight === undefined ? '' : p.pieceWeight),
+      materials: p.materials.map(function(m){
+        return {
+          name: m.name,
+          spec: String(m.spec),
+          unit: m.unit === 'L' ? 'kg' : m.unit,
+          price: String(m.price),
+          usage: String(m.usage)
+        };
+      })
+    };
+  }
+
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(LS_KEY);
+      if(raw){
+        var p = JSON.parse(raw);
+        if(p && Object.prototype.toString.call(p.materials) === '[object Array]'){
+          p.materials = p.materials.map(function(m){
+            return {
+              name: m.name || '',
+              spec: m.spec === undefined || m.spec === null ? '' : String(m.spec),
+              unit: m.unit === 'g' ? 'g' : 'kg',
+              price: m.price === undefined || m.price === null ? '' : String(m.price),
+              usage: m.usage === undefined || m.usage === null ? '' : String(m.usage)
+            };
+          });
+          if(!p.target) p.target = 30;
+          return p;
+        }
+      }
+    }catch(e){}
+    return fromPreset('salt');
+  }
+
+  /* ───────── 숫자 입력 UX (콤마·전체선택) ───────── */
+  function attachNumeric(input, onChange, allowDecimal){
+    if(allowDecimal === undefined) allowDecimal = true;
+    input.addEventListener('focus', function(){
+      setTimeout(function(){
+        try{ if(input.value) input.select(); }catch(e){}
+      }, 0);
+    });
+    input.addEventListener('input', function(){
+      var raw = input.value;
+      var caret = (input.selectionStart === null || input.selectionStart === undefined) ? raw.length : input.selectionStart;
+      var cleaned = raw.replace(/,/g, '');
+      if(allowDecimal){
+        cleaned = cleaned.replace(/[^\d.]/g, '');
+        var first = cleaned.indexOf('.');
+        if(first !== -1){
+          cleaned = cleaned.slice(0, first + 1) + cleaned.slice(first + 1).replace(/\./g, '');
+        }
+      }else{
+        cleaned = cleaned.replace(/[^\d]/g, '');
+      }
+      var formatted = addCommas(cleaned);
+      if(formatted !== raw){
+        var diff = formatted.length - raw.length;
+        input.value = formatted;
+        var pos = Math.max(0, Math.min(formatted.length, caret + diff));
+        try{ input.setSelectionRange(pos, pos); }catch(e){}
+      }
+      onChange(cleaned);
+    });
+    input.addEventListener('blur', function(){
+      if(input.value === '' || input.value === '.') return;
+      input.value = addCommas(input.value.replace(/,/g, ''));
+    });
+  }
+
+  /* ───────── 재료 행 (2줄) ───────── */
+  function buildRow(m){
+    var row = document.createElement('div');
+    row.className = 'm';
+    row._m = m;
+    row.innerHTML =
+      '<div class="m1">' +
+        '<input class="in-name" type="text" autocomplete="off" enterkeyhint="done" placeholder="재료명" aria-label="재료명">' +
+        '<span class="m-cost">0원</span>' +
+        '<button class="m-del" type="button" aria-label="재료 삭제">✕</button>' +
+      '</div>' +
+      '<div class="m2">' +
+        '<div class="f spec">' +
+          '<input class="in-spec" type="text" inputmode="decimal" autocomplete="off" placeholder="규격" aria-label="구매 규격">' +
+          '<select class="in-unit" aria-label="규격 단위"><option value="kg">kg</option><option value="g">g</option></select>' +
+        '</div>' +
+        '<div class="f price"><input class="in-price" type="text" inputmode="numeric" autocomplete="off" placeholder="구매가" aria-label="구매 가격"><i>원</i></div>' +
+        '<div class="f usage"><input class="in-usage" type="text" inputmode="decimal" autocomplete="off" placeholder="사용량" aria-label="이번 배치 사용량"><i>g</i></div>' +
+        '<span class="m-perg">—</span>' +
+      '</div>';
+
+    var nameIn = row.querySelector('.in-name');
+    var specIn = row.querySelector('.in-spec');
+    var unitSel = row.querySelector('.in-unit');
+    var priceIn = row.querySelector('.in-price');
+    var usageIn = row.querySelector('.in-usage');
+
+    nameIn.value = m.name || '';
+    specIn.value = addCommas(m.spec || '');
+    unitSel.value = m.unit === 'g' ? 'g' : 'kg';
+    priceIn.value = addCommas(m.price || '');
+    usageIn.value = addCommas(m.usage || '');
+
+    nameIn.addEventListener('input', function(){ m.name = nameIn.value; recalc(); scheduleSave(); });
+    unitSel.addEventListener('change', function(){ m.unit = unitSel.value; recalc(); scheduleSave(); });
+    attachNumeric(specIn, function(v){ m.spec = v; recalc(); scheduleSave(); }, true);
+    attachNumeric(priceIn, function(v){ m.price = v; recalc(); scheduleSave(); }, false);
+    attachNumeric(usageIn, function(v){ m.usage = v; recalc(); scheduleSave(); }, true);
+
+    row.querySelector('.m-del').addEventListener('click', function(){
+      var idx = state.materials.indexOf(m);
+      if(idx > -1) state.materials.splice(idx, 1);
+      if(row.parentNode) row.parentNode.removeChild(row);
+      if(state.materials.length === 0) renderMaterials();
+      recalc();
+      scheduleSave(true);
+    });
+
+    return row;
+  }
+
+  function renderMaterials(){
+    var list = $('matList');
+    list.innerHTML = '';
+    state.materials.forEach(function(m){ list.appendChild(buildRow(m)); });
+    if(state.materials.length === 0){
+      var hint = document.createElement('div');
+      hint.className = 'm-empty';
+      hint.textContent = '재료가 없습니다. 아래 ＋ 재료 추가를 눌러 주세요.';
+      list.appendChild(hint);
+    }
+  }
+
+  function setCellColor(el, kind){
+    el.className = 'cell' + (el.classList.contains('main') ? ' main' : '') + (kind ? ' ' + kind : '');
+  }
+
+  /* ───────── 계산 ───────── */
+  function recalc(){
+    var rows = $('matList').querySelectorAll('.m');
+    var matTotal = 0, usageSum = 0, used = 0;
+
+    for(var i = 0; i < rows.length; i++){
+      var row = rows[i];
+      var m = row._m;
+      var grams = num(m.spec) * unitGrams(m.unit);
+      var perG = grams > 0 ? num(m.price) / grams : 0;
+      var cost = perG * num(m.usage);
+      matTotal += cost;
+      usageSum += num(m.usage);
+      if((m.name || '').trim() !== '' || cost > 0) used++;
+
+      row.querySelector('.m-cost').textContent = won(cost) + '원';
+      row.querySelector('.m-perg').textContent = perG > 0 ? fmtUnit(perG) + '원/g' : '—';
+      row._cost = cost;
+    }
+
+    var qty = num(state.qty);
+    var loss = num(state.loss);
+    var pack = num(state.packaging);
+    var price = num(state.price);
+    var lossTotal = matTotal * (1 + loss / 100);
+    var packTotal = qty * pack;
+    var perPiece = qty > 0 ? (lossTotal + packTotal) / qty : 0;
+    var ratio = (price > 0 && perPiece > 0) ? (perPiece / price * 100) : null;
+    var profit = (price > 0) ? (price - perPiece) : null;
+    var rec = {};
+    [25,30,35].forEach(function(t){
+      rec[t] = perPiece > 0 ? Math.ceil((perPiece / (t / 100)) / 100) * 100 : 0;
+    });
+
+    lastCalc = {
+      qty: qty, loss: loss, pack: pack, price: price,
+      matTotal: matTotal, lossTotal: lossTotal, packTotal: packTotal,
+      perPiece: perPiece, ratio: ratio, profit: profit, rec: rec,
+      usageSum: usageSum, used: used
+    };
+
+    /* 요약 3분할 */
+    $('sumPerPiece').textContent = won(perPiece);
+    $('sumRatio').textContent = ratio === null ? '—' : ratio.toFixed(1) + '%';
+    $('sumProfit').textContent = profit === null ? '—' : won(profit) + '원';
+
+    /* 부제 1줄: 총 재료비 → 로스 반영 */
+    $('sumLossLine').innerHTML =
+      '1배치 총 재료비 <b>' + won(matTotal) + '원</b> → 로스 ' + (Math.round(loss * 10) / 10) + '% 반영 <b>' + won(lossTotal) + '원</b>';
+
+    /* 권장 판매가 1줄 */
+    $('sumRec').innerHTML = '권장 판매가 · 25% <b>' + (rec[25] > 0 ? won(rec[25]) + '원' : '—') +
+      '</b> · 30% <b>' + (rec[30] > 0 ? won(rec[30]) + '원' : '—') +
+      '</b> · 35% <b>' + (rec[35] > 0 ? won(rec[35]) + '원' : '—') + '</b>';
+
+    /* 색상 */
+    var rk = '', pk = '';
+    if(ratio !== null){
+      if(ratio <= 20) rk = 'good';
+      else if(ratio <= 35) rk = '';
+      else if(ratio <= 50) rk = 'warn';
+      else rk = 'bad';
+      pk = profit > 0 ? 'good' : 'bad';
+    }
+    setCellColor($('cellRatio'), rk);
+    setCellColor($('cellProfit'), pk);
+
+    /* 재료 합계 */
+    $('matCount').textContent = '재료 ' + used + '종 · 사용량 ' + (usageSum > 0 ? fmtUnit(usageSum) : '0') + 'g';
+    $('matTotal').textContent = won(matTotal) + '원';
+
+    /* 반죽 무게 힌트 (보조) */
+    $('weightHint').textContent = '';
+  }
+
+  /* ───────── 저장 ───────── */
+  function setSaveState(txt){ $('saveState').textContent = txt; }
+
+  function updateChips(){
+    var p = state && state.preset;
+    var chips = $('presetBar').querySelectorAll('.pchip[data-p]');
+    for(var i = 0; i < chips.length; i++){
+      chips[i].classList.toggle('on', !!p && chips[i].dataset.p === p);
+    }
+  }
+
+  function markEdited(){
+    if(state && state.preset){
+      state.preset = null;
+      updateChips();
+      scheduleSave();
+    }
+  }
+
+  function scheduleSave(immediate){
+    clearTimeout(saveTimer);
+    var doSave = function(){
+      try{
+        localStorage.setItem(LS_KEY, JSON.stringify(state));
+        setSaveState('자동 저장됨 · ' + nowHM() + ' (이 폰에만 저장)');
+      }catch(e){
+        setSaveState('저장 실패 — 브라우저 저장 공간을 확인해 주세요.');
+      }
+    };
+    if(immediate) doSave();
+    else saveTimer = setTimeout(doSave, 400);
+  }
+
+  /* ───────── 초기 렌더 ───────── */
+  function renderAll(){
+    $('inQty').value = addCommas(state.qty || '');
+    $('inPack').value = addCommas(state.packaging || '');
+    $('inLoss').value = addCommas(state.loss || '');
+    $('inPrice').value = addCommas(state.price || '');
+    $('inDough').value = addCommas(state.doughTotal || '');
+    $('inPiece').value = addCommas(state.pieceWeight || '');
+
+    updateChips();
+    renderMaterials();
+    recalc();
+  }
+
+  /* ───────── 이벤트 ───────── */
+  attachNumeric($('inQty'), function(v){ state.qty = v; recalc(); scheduleSave(); }, false);
+  attachNumeric($('inPack'), function(v){ state.packaging = v; recalc(); scheduleSave(); }, false);
+  attachNumeric($('inPrice'), function(v){ state.price = v; recalc(); scheduleSave(); }, false);
+  attachNumeric($('inDough'), function(v){ state.doughTotal = v; scheduleSave(); }, true);
+  attachNumeric($('inPiece'), function(v){ state.pieceWeight = v; scheduleSave(); }, true);
+  attachNumeric($('inLoss'), function(v){ state.loss = v; recalc(); scheduleSave(); }, true);
+
+  $('btnWeight').addEventListener('click', function(){
+    var row = $('weightRow');
+    var open = row.classList.toggle('open');
+    this.textContent = open ? '반죽 무게로 수량 계산 ▴' : '반죽 무게로 수량 계산 ▾';
+    if(open){ try{ $('inDough').focus(); }catch(e){} }
+  });
+
+  $('btnApplyWeight').addEventListener('click', function(){
+    var d = num(state.doughTotal), pw = num(state.pieceWeight);
+    if(d <= 0 || pw <= 0){
+      toast('총 반죽 무게와 분할 중량을 먼저 넣어 주세요');
+      return;
+    }
+    var q = Math.floor(d / pw);
+    if(q < 1){
+      toast('분할 중량이 총 반죽 무게보다 큽니다');
+      return;
+    }
+    state.qty = String(q);
+    $('inQty').value = addCommas(String(q));
+    recalc(); scheduleSave(true);
+    toast(addCommas(String(d)) + 'g ÷ ' + addCommas(String(pw)) + 'g = ' + q + '개로 맞췄어요');
+  });
+
+  $('btnAdd').addEventListener('click', function(){
+    var m = {name:'', spec:'', unit:'kg', price:'', usage:''};
+    state.materials.push(m);
+    var list = $('matList');
+    var empty = list.querySelector('.m-empty');
+    if(empty) list.removeChild(empty);
+    var row = buildRow(m);
+    list.appendChild(row);
+    recalc(); scheduleSave(true);
+    try{ row.querySelector('.in-name').focus(); }catch(e){}
+  });
+
+  var presetBtns = $('presetBar').querySelectorAll('.pchip[data-p]');
+  for(var pi = 0; pi < presetBtns.length; pi++){
+    presetBtns[pi].addEventListener('click', function(){
+      var key = this.dataset.p;
+      var hasContent = state.materials.some(function(m){
+        return (m.name || '').trim() !== '' || num(m.price) > 0 || num(m.usage) > 0;
+      });
+      if(hasContent){
+        if(!window.confirm(PRESETS[key].label + ' 불러올까요?\n지금 입력한 재료·설정은 사라집니다.')) return;
+      }
+      state = fromPreset(key);
+      renderAll(); scheduleSave(true);
+      toast(PRESETS[key].label + ' 불러왔어요');
+    });
+  }
+
+  $('btnReset').addEventListener('click', function(){
+    if(!window.confirm('입력한 내용을 모두 지우고 빈 양식으로 돌아갈까요?')) return;
+    try{ localStorage.removeItem(LS_KEY); }catch(e){}
+    state = fromPreset('blank');
+    renderAll(); scheduleSave(true);
+    toast('빈 양식으로 초기화했어요');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  /* ───────── 요약 복사 ───────── */
+  function buildSummaryText(){
+    var c = lastCalc;
+    var L = [];
+    L.push('🍞 제빵 원가 계산 요약');
+    L.push('──────────────────');
+    L.push('· 생산 수량: ' + c.qty + '개 (로스율 ' + (Math.round(c.loss * 10) / 10) + '%)');
+    L.push('· 1배치 총 재료비: ' + won(c.matTotal) + '원');
+    L.push('· 로스 반영 총 원가: ' + won(c.lossTotal) + '원');
+    L.push('· 개당 포장비: ' + won(c.pack) + '원 (합계 ' + won(c.packTotal) + '원)');
+    L.push('· 개당 최종 원가: ' + won(c.perPiece) + '원');
+    if(c.price > 0){
+      L.push('· 판매가: ' + won(c.price) + '원 → 원가율 ' + c.ratio.toFixed(1) + '%');
+      L.push('· 개당 순이익: ' + won(c.profit) + '원');
+    }else{
+      L.push('· 판매가: 미입력 (원가율 계산 전)');
+    }
+    L.push('· 목표 원가율별 권장 판매가: 25% ' + won(c.rec[25]) + '원 / 30% ' + won(c.rec[30]) + '원 / 35% ' + won(c.rec[35]) + '원');
+    L.push('──────────────────');
+    L.push('※ 재료·포장 원가만 계산 (인건비·임대료·전기·감가상각 제외)');
+    L.push('※ 표준 참고 예시이며 실제 매장 단가·배합과 다를 수 있습니다.');
+    return L.join('\n');
+  }
+
+  function copyText(text, done){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ fallback(); });
+    }else{
+      fallback();
+    }
+    function fallback(){
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '-1000px';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      var ok = false;
+      try{
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, text.length);
+        ok = document.execCommand('copy');
+      }catch(e){ ok = false; }
+      document.body.removeChild(ta);
+      done(ok);
+    }
+  }
+
+  $('btnCopy').addEventListener('click', function(){
+    copyText(buildSummaryText(), function(ok){
+      toast(ok ? '원가 요약을 복사했어요' : '복사가 안 됐어요. 화면을 길게 눌러 복사해 주세요');
+    });
+  });
+
+  /* ───────── 토스트 ───────── */
+  var toastTimer = null;
+  function toast(msg){
+    var t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  /* ───────── 시작 ───────── */
+  state = loadState();
+  renderAll();
+  (function(){
+    var c;
+    try{ c = localStorage.getItem(LS_KEY); }catch(e){}
+    if(c) setSaveState('마지막 입력을 불러왔어요 · 이 폰에만 저장됨');
+  })();
+
+  /* 탭 전환 등으로 되돌아왔을 때 값 유지 확인용 */
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden) recalc();
+  });
+
+  document.body.addEventListener('input', markEdited, true);
+})();
+</script>
+</body>
+</html>

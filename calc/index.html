@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>바른밀 베이커스 퍼센트 & DDT 물온도 계산기</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <style>
+    :root {
+      --bg: #F8F5F0;
+      --card-bg: #FFFFFF;
+      --primary: #965B28;
+      --primary-light: #EFE6DC;
+      --primary-dark: #643914;
+      --accent-blue: #1E6091;
+      --accent-blue-light: #E3F2FD;
+      --accent-green: #2E7D32;
+      --accent-green-light: #E8F5E9;
+      --accent-red: #D32F2F;
+      --accent-amber: #E65100;
+      --accent-amber-light: #FFF3E0;
+      --text-main: #241D17;
+      --text-sub: #665B52;
+      --text-muted: #9E948C;
+      --border: #E8DFD5;
+      --border-dark: #D4C6B8;
+      --shadow-sm: 0 2px 6px rgba(40, 25, 10, 0.04);
+      --shadow-md: 0 4px 16px rgba(40, 25, 10, 0.08);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 16px 12px 60px;
+      line-height: 1.5;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 18px;
+      padding-top: 6px;
+    }
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .header-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+
+    .nav-tabs {
+      display: flex;
+      background: #EFEBE5;
+      padding: 4px;
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      gap: 4px;
+    }
+    .nav-tab {
+      flex: 1;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--text-sub);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .nav-tab.active {
+      background: #FFFFFF;
+      color: var(--primary-dark);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    .preset-bar {
+      margin-bottom: 14px;
+    }
+    .preset-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .preset-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .preset-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .preset-chip {
+      flex-shrink: 0;
+      padding: 7px 14px;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .preset-chip:hover, .preset-chip:active {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .summary-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 10px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .summary-card.highlight {
+      background: #F0F7FF;
+      border-color: #BEE3F8;
+    }
+    .summary-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+    .summary-card.highlight .summary-title {
+      color: var(--accent-blue);
+    }
+    .summary-value {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.3px;
+    }
+    .summary-card.highlight .summary-value {
+      color: var(--accent-blue);
+    }
+    .summary-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .mode-bar {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+    .mode-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .mode-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mode-desc {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+    .mode-switch-btn {
+      padding: 6px 12px;
+      background: var(--primary-light);
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+    .mode-switch-btn.locked {
+      background: #E8F5E9;
+      border-color: #2E7D32;
+      color: #1B5E20;
+    }
+
+    .scale-box {
+      display: none;
+      background: #FFFBF0;
+      border: 1px dashed var(--primary);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+    .scale-box.active {
+      display: block;
+    }
+    .scale-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+    .scale-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .scale-input-group {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0 10px;
+    }
+    .scale-input-group input {
+      width: 100%;
+      border: none;
+      outline: none;
+      padding: 8px 0;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: right;
+      color: var(--primary-dark);
+    }
+    .scale-unit {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-left: 6px;
+    }
+
+    .calc-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px 12px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 14px;
+    }
+
+    .table-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #F0EAE1;
+    }
+    .table-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .view-toggle-btn {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      border: 1px solid #D8C3B0;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    table.baker-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    table.baker-table th {
+      background: #FAF7F2;
+      color: var(--text-sub);
+      font-weight: 700;
+      font-size: 12px;
+      padding: 8px 6px;
+      text-align: right;
+      border-bottom: 1px solid var(--border);
+    }
+    table.baker-table th:first-child {
+      text-align: left;
+      padding-left: 10px;
+    }
+    table.baker-table th.col-pct {
+      color: var(--accent-blue);
+      background: #F0F7FF;
+      width: 86px;
+    }
+
+    table.baker-table td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #F0EAE1;
+      text-align: right;
+      vertical-align: middle;
+    }
+    table.baker-table td:first-child {
+      text-align: left;
+      padding-left: 8px;
+    }
+
+    .ing-name-input {
+      border: 1px solid transparent;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      padding: 4px 6px;
+      border-radius: 6px;
+      width: 130px;
+    }
+    .ing-name-input:focus {
+      border-color: var(--primary);
+      background: #FFFFFF;
+      outline: none;
+    }
+
+    .num-input {
+      width: 80px;
+      border: 1.5px solid var(--border);
+      background: #FFFDF9;
+      border-radius: 6px;
+      padding: 6px 6px;
+      font-size: 14px;
+      font-weight: 800;
+      text-align: right;
+      color: #C0392B;
+      outline: none;
+      transition: all 0.15s;
+    }
+    .num-input:focus {
+      border-color: var(--primary);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+    .num-input.pct-input {
+      color: var(--accent-blue);
+      background: #F4F9FF;
+      border-color: #C8E1FF;
+      width: 68px;
+    }
+
+    .pct-cell {
+      font-weight: 800;
+      color: var(--accent-blue);
+      background: #F7FAFE;
+    }
+
+    .del-btn {
+      color: #D32F2F;
+      background: none;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      line-height: 1;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .btn-add {
+      flex: 1;
+      min-width: 90px;
+      padding: 8px 10px;
+      background: #FAF7F2;
+      border: 1px dashed var(--border-dark);
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .btn-add:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+    }
+
+    /* 르방 전용 분리 카드 */
+    .levain-card {
+      background: #FFFDF7;
+      border: 1.5px solid #EEDBBA;
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    .levain-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .levain-card-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #7A570E;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .levain-status-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: #EFE6DC;
+      color: var(--primary-dark);
+    }
+    .levain-status-badge.on {
+      background: #E8F5E9;
+      color: #1B5E20;
+    }
+
+    .levain-body {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #E0CFAC;
+    }
+    .levain-body.open {
+      display: block;
+    }
+
+    .levain-inputs-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .levain-input-box {
+      background: #FFFFFF;
+      border: 1px solid #D8C7A3;
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .lib-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #7A570E;
+      margin-bottom: 4px;
+    }
+    .lib-wrap {
+      display: flex;
+      align-items: center;
+    }
+    .lib-wrap input {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      font-weight: 800;
+      text-align: right;
+      color: #7A570E;
+    }
+    .lib-wrap span {
+      font-size: 12px;
+      font-weight: 700;
+      color: #A38542;
+      margin-left: 4px;
+    }
+
+    .levain-result-banner {
+      background: #FFF8E6;
+      border: 1px solid #E6D29E;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #614300;
+      line-height: 1.6;
+    }
+    .lrb-highlight {
+      font-weight: 800;
+      color: #8C531B;
+    }
+
+    .scale-guide-box {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+    .sg-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .sg-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .sg-item {
+      background: #FAF7F2;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .sg-item strong {
+      color: var(--primary-dark);
+      font-weight: 800;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .act-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+      transition: all 0.15s;
+    }
+    .act-btn.primary {
+      background: var(--primary);
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(150, 91, 40, 0.25);
+    }
+    .act-btn.primary:active {
+      background: var(--primary-dark);
+    }
+    .act-btn.secondary {
+      background: #FFFFFF;
+      border: 1px solid var(--border-dark);
+      color: var(--text-main);
+    }
+
+    /* DDT 희망 물온도 계산기 */
+    .ddt-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 16px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 14px;
+    }
+    .clean-input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .clean-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .clean-group label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .clean-input-wrap {
+      display: flex;
+      align-items: center;
+      background: #FFFDF9;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 2px 10px;
+    }
+    .clean-input-wrap input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 8px 0;
+      font-size: 16px;
+      font-weight: 800;
+      text-align: right;
+      color: var(--text-main);
+    }
+    .clean-input-wrap span {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-left: 6px;
+    }
+
+    .friction-box {
+      background: #FAF7F2;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+    .friction-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .friction-header label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .friction-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .f-chip {
+      padding: 5px 10px;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+    }
+    .f-chip.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+      font-weight: 700;
+    }
+
+    .result-banner {
+      background: linear-gradient(135deg, #FFF9F2 0%, #F5E8D8 100%);
+      border: 2px solid var(--primary);
+      border-radius: var(--radius-lg);
+      padding: 20px 16px;
+      text-align: center;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-md);
+    }
+    .rb-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 4px;
+    }
+    .rb-temp {
+      font-size: 38px;
+      font-weight: 900;
+      color: var(--primary-dark);
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+    .rb-formula {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-top: 6px;
+    }
+    .rb-status {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 14px;
+    }
+    .rb-status.normal { background: #E8F5E9; color: #2E7D32; }
+    .rb-status.cold { background: #E3F2FD; color: #1565C0; }
+    .rb-status.ice { background: #FFEBEE; color: #C62828; }
+
+    .ice-toggle-btn {
+      width: 100%;
+      background: #F0F7FF;
+      border: 1px solid #BBDEFB;
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1565C0;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+    .ice-card {
+      display: none;
+      background: #F7FAFE;
+      border: 1.5px solid #90CAF9;
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .ice-card.open {
+      display: block;
+    }
+    .ice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .ice-result-box {
+      background: #FFFFFF;
+      border: 1px solid #BBDEFB;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .ice-res-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1976D2;
+      margin-bottom: 2px;
+    }
+    .ice-res-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: #0D47A1;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(36, 29, 23, 0.92);
+      color: #FFFFFF;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      z-index: 1000;
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+    }
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 헤더 -->
+  <header>
+    <div class="header-badge">🥐 바른밀제빵소 실전 계산기</div>
+    <h1>베이커스 퍼센트 & 물온도 계산기</h1>
+    <p class="header-desc">르방 분리 계산 · g ↔ % 실시간 변환 · DDT 희망 물온도</p>
+  </header>
+
+  <!-- 메인 탭 -->
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="switchMainTab('baker')">
+      <span>🍞</span> 베이커스 퍼센트
+    </div>
+    <div class="nav-tab" onclick="switchMainTab('ddt')">
+      <span>🌡️</span> 희망 물온도 (DDT)
+    </div>
+  </div>
+
+  <!-- 탭 1: 베이커스 퍼센트 -->
+  <div id="tab-baker" class="tab-pane active">
+
+    <!-- 프리셋 선택 바 -->
+    <div class="preset-bar">
+      <div class="preset-label">
+        <span>⚡ 인기 빵 배합비 프리셋</span>
+        <span style="font-size: 10px; color: var(--text-muted);">원터치 자동 입력</span>
+      </div>
+      <div class="preset-scroll">
+        <div class="preset-chip" onclick="loadPreset('sourdough')">🌾 100% 우리밀 사워도우</div>
+        <div class="preset-chip" onclick="loadPreset('baguette')">🥖 정통 프랑스 바게트</div>
+        <div class="preset-chip" onclick="loadPreset('ciabatta')">🫒 블랙 올리브 치아바타</div>
+        <div class="preset-chip" onclick="loadPreset('saltbread')">🧈 AOP 버터 소금빵</div>
+        <div class="preset-chip" onclick="loadPreset('focaccia')">🌿 로즈마리 포카치아</div>
+        <div class="preset-chip" onclick="loadPreset('wholewheat')">🍞 100% 통밀식빵</div>
+      </div>
+      <div style="font-size: 11px; color: #7A5E2E; background: #FFF9ED; border: 1px solid #F3E0B5; border-radius: 8px; padding: 8px 11px; margin-top: 8px; line-height: 1.45;">
+        📢 <strong>참고용 예시 배합비 안내:</strong> 위 프리셋은 홈베이커를 위한 표준 참고 예시이며, 바른밀제빵소의 실제 매장 비법 레시피와는 다릅니다. 작업 환경과 밀가루에 맞추어 자유롭게 수정해서 사용하세요!
+      </div>
+    </div>
+
+    <!-- 상단 핵심 요약 카드 -->
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-title">총 밀가루 (100%)</div>
+        <div class="summary-value" id="sum-total-flour">1,000 g</div>
+        <div class="summary-sub" id="sum-flour-detail">가루 1,000g</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-title">총 반죽량</div>
+        <div class="summary-value" id="sum-total-dough">1,720 g</div>
+        <div class="summary-sub" id="sum-dough-count">300g 기준 약 5.7개</div>
+      </div>
+      <div class="summary-card highlight">
+        <div class="summary-title">전체 수분율</div>
+        <div class="summary-value" id="sum-total-hydration">70.0%</div>
+        <div class="summary-sub" id="sum-water-detail">총 수분 700 g</div>
+      </div>
+    </div>
+
+    <!-- 모드 전환 바 -->
+    <div class="mode-bar">
+      <div class="mode-info">
+        <div class="mode-title" id="mode-status-title">
+          <span>⚖️</span> <span>그램(g) 직접 입력 모드</span>
+        </div>
+        <div class="mode-desc" id="mode-status-desc">
+          무게를 입력하면 베이커스 %가 실시간 계산됩니다
+        </div>
+      </div>
+      <button class="mode-switch-btn" id="mode-toggle-btn" onclick="toggleMode()">
+        🔒 % 비율 고정하기
+      </button>
+    </div>
+
+    <!-- % 고정 모드일 때 스케일링 박스 -->
+    <div class="scale-box" id="scale-box">
+      <div class="scale-title">🎯 목표 생산량으로 전체 재료 비례 조절</div>
+      <div class="scale-row">
+        <div class="scale-input-group">
+          <input type="number" inputmode="decimal" id="scale-target-dough" placeholder="1720" onfocus="this.select()" oninput="scaleByTotalDough(this.value)">
+          <span class="scale-unit">g 반죽 총량</span>
+        </div>
+        <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">또는</span>
+        <div class="scale-input-group">
+          <input type="number" inputmode="decimal" id="scale-target-flour" placeholder="1000" onfocus="this.select()" oninput="scaleByTotalFlour(this.value)">
+          <span class="scale-unit">g 총 밀가루</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 깔끔한 메인 베이커스 배합표 (3열 간편 표) -->
+    <div class="calc-card">
+      <div class="table-top-bar">
+        <div class="table-title">
+          <span>📋</span> 기본 재료 배합표
+        </div>
+        <button class="view-toggle-btn" id="btn-view-toggle" onclick="toggleTableView()">
+          📊 5열 상세표 보기
+        </button>
+      </div>
+
+      <table class="baker-table" id="baker-table">
+        <thead>
+          <tr id="table-header-row">
+            <th style="width: 140px;">재료</th>
+            <th>본반죽 (g)</th>
+            <th class="col-detail" style="display:none;">르방 (g)</th>
+            <th class="col-detail" style="display:none;">전체 (g)</th>
+            <th class="col-pct">베이커스 (%)</th>
+            <th style="width: 24px;"></th>
+          </tr>
+        </thead>
+        <tbody id="baker-tbody">
+          <!-- 동적 렌더링 -->
+        </tbody>
+      </table>
+
+      <!-- 행 추가 버튼들 -->
+      <div class="btn-row">
+        <button class="btn-add" onclick="addRow('flour')">＋ 가루 추가</button>
+        <button class="btn-add" onclick="addRow('water')">＋ 물 추가</button>
+        <button class="btn-add" onclick="addRow('other')">＋ 기타 재료 추가</button>
+      </div>
+    </div>
+
+    <!-- 르방 전용 분리 카드 -->
+    <div class="levain-card">
+      <div class="levain-card-header" onclick="toggleLevainCard()">
+        <div class="levain-card-title">
+          <span>🏺</span> 사워도우 르방(스타터) 분리 계산
+        </div>
+        <div class="levain-status-badge on" id="badge-levain-status">사용 중</div>
+      </div>
+
+      <div class="levain-body open" id="levain-card-body">
+        <div class="levain-inputs-row">
+          <div class="levain-input-box">
+            <div class="lib-label">투입할 르방 무게</div>
+            <div class="lib-wrap">
+              <input type="number" inputmode="decimal" id="levain-weight-input" value="200" onfocus="this.select()" oninput="handleLevainWeightInput(this.value)">
+              <span>g</span>
+            </div>
+          </div>
+          <div class="levain-input-box">
+            <div class="lib-label">르방 수분율 (기본 1:1)</div>
+            <div class="lib-wrap">
+              <input type="number" inputmode="decimal" id="levain-hydration-input" value="100" onfocus="this.select()" oninput="handleLevainHydrationInput(this.value)">
+              <span>%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="levain-result-banner" id="levain-breakdown-text">
+          • 르방 <span class="lrb-highlight">200g</span> = 밀가루 <span class="lrb-highlight">100g</span> + 물 <span class="lrb-highlight">100g</span> 자동 분리 계산<br>
+          • 르방 속 가루와 물이 총 밀가루 및 전체 수분율에 자동 합산되었습니다.
+        </div>
+      </div>
+    </div>
+
+    <!-- 실전 저울 계량 가이드 박스 -->
+    <div class="scale-guide-box">
+      <div class="sg-title">
+        <span>⚖️</span> 주방 저울 실전 계량 가이드 (볼에 담을 실제 무게)
+      </div>
+      <div class="sg-list" id="scale-guide-list">
+        <!-- 동적 렌더링 -->
+      </div>
+    </div>
+
+    <!-- 하단 액션 버튼 -->
+    <div class="action-bar">
+      <button class="act-btn secondary" onclick="copyRecipeText()">📋 레시피 텍스트 복사</button>
+      <button class="act-btn primary" onclick="sendToDdt()">🌡️ 이 물량으로 수온 계산하기 →</button>
+    </div>
+
+  </div>
+
+  <!-- 탭 2: DDT 희망 물온도 계산기 -->
+  <div id="tab-ddt" class="tab-pane">
+
+    <div class="ddt-card">
+      <div style="font-size: 15px; font-weight: 800; color: var(--primary-dark); margin-bottom: 12px;">
+        🌡️ 기본 반죽 온도 (3요소 공식)
+      </div>
+
+      <div class="clean-input-grid">
+        <div class="clean-group">
+          <label>🎯 희망 반죽 온도 (DDT)</label>
+          <div class="clean-input-wrap">
+            <input type="number" inputmode="decimal" id="ddt-target" value="25.0" step="0.5" onfocus="this.select()" oninput="calcDdt()">
+            <span>°C</span>
+          </div>
+        </div>
+        <div class="clean-group">
+          <label>🏠 실내 온도</label>
+          <div class="clean-input-wrap">
+            <input type="number" inputmode="decimal" id="ddt-room" value="22.0" step="0.5" onfocus="this.select()" oninput="calcDdt()">
+            <span>°C</span>
+          </div>
+        </div>
+        <div class="clean-group">
+          <label>🌾 밀가루 온도</label>
+          <div class="clean-input-wrap">
+            <input type="number" inputmode="decimal" id="ddt-flour" value="21.0" step="0.5" onfocus="this.select()" oninput="calcDdt()">
+            <span>°C</span>
+          </div>
+        </div>
+        <div class="clean-group">
+          <label>⚙️ 반죽기 마찰열</label>
+          <div class="clean-input-wrap">
+            <input type="number" inputmode="decimal" id="ddt-friction" value="8.0" step="0.5" onfocus="this.select()" oninput="calcDdt()">
+            <span>°C</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="friction-box">
+        <div class="friction-header">
+          <label>반죽기 마찰열 추천 프리셋:</label>
+        </div>
+        <div class="friction-chips">
+          <div class="f-chip" onclick="setFriction(1.0, this)">손반죽 (+1°C)</div>
+          <div class="f-chip" onclick="setFriction(4.5, this)">키친에이드 (+4.5°C)</div>
+          <div class="f-chip active" onclick="setFriction(8.0, this)">소형 스파이럴 (+8°C)</div>
+          <div class="f-chip" onclick="setFriction(12.0, this)">대형 고속믹서 (+12°C)</div>
+        </div>
+      </div>
+
+      <!-- 르방 수온 분리 토글 카드 -->
+      <div class="levain-card" style="margin-bottom: 14px;">
+        <div class="levain-card-header" onclick="toggleDdtLevain()">
+          <div class="levain-card-title">
+            <span>🏺</span> 르방(사워도우) 온도 포함하기
+          </div>
+          <div class="levain-status-badge" id="badge-ddt-levain">선택 (OFF)</div>
+        </div>
+        <div class="levain-body" id="ddt-levain-body" style="display:none;">
+          <div class="clean-group">
+            <label>르방 / 스타터 온도</label>
+            <div class="clean-input-wrap">
+              <input type="number" inputmode="decimal" id="ddt-starter" value="24.0" step="0.5" onfocus="this.select()" oninput="calcDdt()">
+              <span>°C</span>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: #8A6412; margin-top: 6px;">
+            * 르방 온도를 포함한 4요소 공식으로 자동 계산됩니다.
+          </div>
+        </div>
+      </div>
+
+      <!-- DDT 결과 배너 -->
+      <div class="result-banner">
+        <div class="rb-label">투입해야 할 물의 온도</div>
+        <div class="rb-temp" id="res-water-temp">24.0 °C</div>
+        <div class="rb-formula" id="res-water-formula">(목표 25°C × 3) - (실온 22 + 밀온 21 + 마찰열 8)</div>
+        <div class="rb-status normal" id="res-water-status">✅ 상온수 투입</div>
+      </div>
+
+      <!-- 얼음 계산기 아코디언 -->
+      <button class="ice-toggle-btn" onclick="toggleIceCard()">
+        <span>🧊 스마트 얼음 계산기 (여름철·냉수용)</span>
+        <span id="ice-arrow">▼ 펼치기</span>
+      </button>
+
+      <div class="ice-card" id="ice-card">
+        <div class="clean-input-grid" style="margin-bottom: 10px;">
+          <div class="clean-group">
+            <label>💧 총 물량 (g)</label>
+            <div class="clean-input-wrap">
+              <input type="number" inputmode="decimal" id="ice-total-water" value="700" onfocus="this.select()" oninput="calcIce()">
+              <span>g</span>
+            </div>
+          </div>
+          <div class="clean-group">
+            <label>🚰 수돗물/정수 온도 (°C)</label>
+            <div class="clean-input-wrap">
+              <input type="number" inputmode="decimal" id="ice-tap-temp" value="20.0" step="0.5" onfocus="this.select()" oninput="calcIce()">
+              <span>°C</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ice-grid">
+          <div class="ice-result-box">
+            <div class="ice-res-label">🧊 투입할 얼음</div>
+            <div class="ice-res-val" id="res-ice-weight">0 g</div>
+          </div>
+          <div class="ice-result-box">
+            <div class="ice-res-label">💧 함께 넣을 찬물</div>
+            <div class="ice-res-val" id="res-water-weight">700 g</div>
+          </div>
+        </div>
+        <div style="font-size: 11px; color: #5C6BC0; text-align: center;">
+          * 얼음 융해잠열(80 cal/g)이 완벽히 반영된 정확한 계산값입니다.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 복사 버튼 -->
+    <div class="action-bar">
+      <button class="act-btn primary" onclick="copyDdtText()">📋 물온도·얼음 계량값 복사하기</button>
+    </div>
+
+  </div>
+
+  <div id="toast">복사되었습니다!</div>
+
+  <script>
+    let isPercentLocked = false;
+    let isDetailView = false;
+    let useLevain = true;
+    let levainWeight = 200;
+    let levainHydration = 100;
+
+    let ingredients = [
+      { id: 1, type: 'flour', name: 'T65 강력분', doughG: 900, pct: 90 },
+      { id: 2, type: 'water', name: '물 (본반죽)', doughG: 600, pct: 60 },
+      { id: 3, type: 'other', name: '소금', doughG: 20, pct: 2.0 }
+    ];
+
+    let nextId = 4;
+
+    const PRESETS = {
+      sourdough: {
+        name: '100% 우리밀 사워도우',
+        useLevain: true,
+        levainWeight: 200,
+        levainHydration: 100,
+        items: [
+          { type: 'flour', name: '유기농 우리밀(백밀)', doughG: 800, pct: 80 },
+          { type: 'flour', name: '우리밀 통밀가루', doughG: 100, pct: 10 },
+          { type: 'water', name: '물 A (본반죽)', doughG: 650, pct: 65 },
+          { type: 'water', name: '물 B (후첨수)', doughG: 50, pct: 5 },
+          { type: 'other', name: '소금', doughG: 20, pct: 2.0 }
+        ]
+      },
+      baguette: {
+        name: '정통 프랑스 바게트',
+        useLevain: true,
+        levainWeight: 112,
+        levainHydration: 100,
+        items: [
+          { type: 'flour', name: 'T65 전통 밀가루', doughG: 451, pct: 89 },
+          { type: 'water', name: '물 A', doughG: 279, pct: 55 },
+          { type: 'water', name: '물 B (바시나주)', doughG: 50, pct: 9.9 },
+          { type: 'other', name: '소금', doughG: 10, pct: 2.0 }
+        ]
+      },
+      ciabatta: {
+        name: '블랙 올리브 치아바타',
+        useLevain: false,
+        levainWeight: 0,
+        levainHydration: 100,
+        items: [
+          { type: 'flour', name: '강력분', doughG: 1000, pct: 100 },
+          { type: 'water', name: '물 (수분율 80%)', doughG: 800, pct: 80 },
+          { type: 'other', name: '엑스트라버진 올리브유', doughG: 30, pct: 3.0 },
+          { type: 'other', name: '소금', doughG: 20, pct: 2.0 },
+          { type: 'other', name: '인스턴트 이스트', doughG: 10, pct: 1.0 },
+          { type: 'other', name: '블랙 올리브 슬라이스', doughG: 150, pct: 15.0 }
+        ]
+      },
+      saltbread: {
+        name: 'AOP 버터 소금빵',
+        useLevain: false,
+        levainWeight: 0,
+        levainHydration: 100,
+        items: [
+          { type: 'flour', name: '강력분 (고단백)', doughG: 1000, pct: 100 },
+          { type: 'water', name: '물 또는 우유', doughG: 620, pct: 62 },
+          { type: 'other', name: '설탕', doughG: 50, pct: 5.0 },
+          { type: 'other', name: '소금', doughG: 20, pct: 2.0 },
+          { type: 'other', name: '버터 (반죽용)', doughG: 100, pct: 10.0 },
+          { type: 'other', name: '인스턴트 이스트', doughG: 15, pct: 1.5 }
+        ]
+      },
+      focaccia: {
+        name: '로즈마리 포카치아',
+        useLevain: true,
+        levainWeight: 200,
+        levainHydration: 100,
+        items: [
+          { type: 'flour', name: '강력분 / T65', doughG: 900, pct: 90 },
+          { type: 'water', name: '물 A', doughG: 720, pct: 72 },
+          { type: 'water', name: '물 B (추가수)', doughG: 50, pct: 5 },
+          { type: 'other', name: '올리브오일', doughG: 50, pct: 5.0 },
+          { type: 'other', name: '소금', doughG: 22, pct: 2.2 }
+        ]
+      },
+      wholewheat: {
+        name: '100% 통밀식빵',
+        useLevain: true,
+        levainWeight: 200,
+        levainHydration: 100,
+        items: [
+          { type: 'flour', name: '100% 유기농 통밀가루', doughG: 850, pct: 85 },
+          { type: 'water', name: '물', doughG: 680, pct: 68 },
+          { type: 'other', name: '꿀 또는 원당', doughG: 40, pct: 4.0 },
+          { type: 'other', name: '소금', doughG: 20, pct: 2.0 },
+          { type: 'other', name: '올리브유 또는 버터', doughG: 40, pct: 4.0 }
+        ]
+      }
+    };
+
+    function loadPreset(key) {
+      const p = PRESETS[key];
+      if (!p) return;
+
+      useLevain = p.useLevain;
+      levainWeight = p.levainWeight;
+      levainHydration = p.levainHydration;
+
+      document.getElementById('levain-weight-input').value = levainWeight;
+      document.getElementById('levain-hydration-input').value = levainHydration;
+
+      const badge = document.getElementById('badge-levain-status');
+      const body = document.getElementById('levain-card-body');
+      if (useLevain) {
+        badge.textContent = '사용 중';
+        badge.className = 'levain-status-badge on';
+        body.classList.add('open');
+      } else {
+        badge.textContent = '사용 안 함';
+        badge.className = 'levain-status-badge';
+        body.classList.remove('open');
+      }
+
+      ingredients = [];
+      p.items.forEach(item => {
+        ingredients.push({
+          id: nextId++,
+          type: item.type,
+          name: item.name,
+          doughG: item.doughG,
+          pct: item.pct
+        });
+      });
+
+      isPercentLocked = false;
+      updateModeUI();
+      buildTableDOM();
+      updateCalculations();
+      showToast(`'${p.name}' 배합표를 불러왔습니다!`);
+    }
+
+    function toggleTableView() {
+      isDetailView = !isDetailView;
+      const btn = document.getElementById('btn-view-toggle');
+      btn.textContent = isDetailView ? '⚡ 3열 간편표 보기' : '📊 5열 상세표 보기';
+      buildTableDOM();
+      updateCalculations();
+    }
+
+    function toggleLevainCard() {
+      useLevain = !useLevain;
+      const badge = document.getElementById('badge-levain-status');
+      const body = document.getElementById('levain-card-body');
+      if (useLevain) {
+        badge.textContent = '사용 중';
+        badge.className = 'levain-status-badge on';
+        body.classList.add('open');
+        showToast('🏺 사워도우 르방 계산이 활성화되었습니다.');
+      } else {
+        badge.textContent = '사용 안 함';
+        badge.className = 'levain-status-badge';
+        body.classList.remove('open');
+        showToast('르방을 껐습니다. 순수 본반죽 배합표로 계산됩니다.');
+      }
+      updateCalculations();
+    }
+
+    function handleLevainWeightInput(val) {
+      levainWeight = val === '' ? 0 : Number(val);
+      updateCalculations();
+    }
+
+    function handleLevainHydrationInput(val) {
+      levainHydration = val === '' ? 100 : Number(val);
+      updateCalculations();
+    }
+
+    function buildTableDOM() {
+      const tbody = document.getElementById('baker-tbody');
+      tbody.innerHTML = '';
+
+      document.querySelectorAll('.col-detail').forEach(el => {
+        el.style.display = isDetailView ? '' : 'none';
+      });
+
+      ingredients.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.id = `row-item-${item.id}`;
+
+        let detailCols = isDetailView ? `
+          <td id="cell-levain-${item.id}">0</td>
+          <td><strong id="cell-total-${item.id}">0</strong></td>
+        ` : '';
+
+        let pctHtml = isPercentLocked ? `
+          <input type="number" inputmode="decimal" class="num-input pct-input" id="input-pct-${item.id}"
+            value="${item.pct}" placeholder="0" step="0.1"
+            onfocus="this.select()"
+            oninput="handlePctInput(${item.id}, this.value)">
+        ` : `<span class="pct-cell" id="cell-pct-${item.id}">${item.pct}%</span>`;
+
+        tr.innerHTML = `
+          <td>
+            <input type="text" class="ing-name-input" value="${item.name}" oninput="changeName(${item.id}, this.value)">
+          </td>
+          <td>
+            <input type="number" inputmode="decimal" class="num-input" id="input-dough-${item.id}"
+              value="${item.doughG !== 0 ? item.doughG : ''}" placeholder="0"
+              ${isPercentLocked ? 'readonly style="background:#F7F4EF; color:#888;"' : ''}
+              onfocus="this.select()"
+              oninput="handleDoughInput(${item.id}, this.value)">
+          </td>
+          ${detailCols}
+          <td>${pctHtml}</td>
+          <td>
+            <button class="del-btn" onclick="deleteRow(${item.id})" title="삭제">✕</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function handleDoughInput(id, val) {
+      let item = ingredients.find(i => i.id === id);
+      if (item) {
+        item.doughG = val === '' ? 0 : Number(val);
+        updateCalculations();
+      }
+    }
+
+    function handlePctInput(id, val) {
+      let item = ingredients.find(i => i.id === id);
+      if (item) {
+        item.pct = val === '' ? 0 : Number(val);
+        const targetFlour = Number(document.getElementById('scale-target-flour').value) || 1000;
+        scaleByTotalFlour(targetFlour);
+      }
+    }
+
+    function changeName(id, val) {
+      let item = ingredients.find(i => i.id === id);
+      if (item) item.name = val;
+    }
+
+    function addRow(type) {
+      let name = type === 'flour' ? '새 가루' : (type === 'water' ? '물' : '새 재료');
+      ingredients.push({
+        id: nextId++,
+        type: type,
+        name: name,
+        doughG: 0,
+        pct: 0
+      });
+      buildTableDOM();
+      updateCalculations();
+    }
+
+    function deleteRow(id) {
+      if (ingredients.length <= 1) return;
+      ingredients = ingredients.filter(i => i.id !== id);
+      buildTableDOM();
+      updateCalculations();
+    }
+
+    function updateCalculations() {
+      let levainFlour = 0;
+      let levainWater = 0;
+      if (useLevain && levainWeight > 0) {
+        levainFlour = levainWeight / (1 + (levainHydration / 100));
+        levainWater = levainWeight - levainFlour;
+      }
+
+      let doughFlourSum = 0;
+      let doughWaterSum = 0;
+      let doughTotalSum = 0;
+
+      ingredients.forEach(i => {
+        let g = Number(i.doughG) || 0;
+        doughTotalSum += g;
+        if (i.type === 'flour') doughFlourSum += g;
+        if (i.type === 'water') doughWaterSum += g;
+      });
+
+      let totalFlour = doughFlourSum + (useLevain ? levainFlour : 0);
+      let totalWater = doughWaterSum + (useLevain ? levainWater : 0);
+      let grandDoughTotal = doughTotalSum + (useLevain ? levainWeight : 0);
+      let totalHydration = totalFlour > 0 ? ((totalWater / totalFlour) * 100).toFixed(1) : 0;
+
+      if (!isPercentLocked && totalFlour > 0) {
+        ingredients.forEach(i => {
+          let g = Number(i.doughG) || 0;
+          i.pct = parseFloat(((g / totalFlour) * 100).toFixed(1));
+        });
+      }
+
+      document.getElementById('sum-total-flour').textContent = `${Math.round(totalFlour).toLocaleString()} g`;
+      document.getElementById('sum-flour-detail').textContent = useLevain && levainFlour > 0
+        ? `본반죽 ${Math.round(doughFlourSum)} + 르방속 ${Math.round(levainFlour)}g`
+        : `가루 100% 기준`;
+
+      document.getElementById('sum-total-dough').textContent = `${Math.round(grandDoughTotal).toLocaleString()} g`;
+      document.getElementById('sum-dough-count').textContent = `300g 기준 약 ${(grandDoughTotal / 300).toFixed(1)}개`;
+
+      document.getElementById('sum-total-hydration').textContent = `${totalHydration}%`;
+      document.getElementById('sum-water-detail').textContent = `총 수분 ${Math.round(totalWater).toLocaleString()} g`;
+
+      const levainTextEl = document.getElementById('levain-breakdown-text');
+      if (useLevain && levainWeight > 0) {
+        let levainPct = totalFlour > 0 ? ((levainWeight / totalFlour) * 100).toFixed(1) : 0;
+        levainTextEl.innerHTML = `
+          • 르방 <span class="lrb-highlight">${levainWeight}g (${levainPct}%)</span> = 밀가루 <span class="lrb-highlight">${Math.round(levainFlour)}g</span> + 물 <span class="lrb-highlight">${Math.round(levainWater)}g</span> 분리<br>
+          • 총 밀가루: <span class="lrb-highlight">${Math.round(totalFlour)}g</span> / 전체 수분율: <span class="lrb-highlight">${totalHydration}%</span> (총 반죽 ${Math.round(grandDoughTotal)}g)
+        `;
+      } else {
+        levainTextEl.innerHTML = `• 현재 르방 미사용 상태입니다. (순수 본반죽 배합)`;
+      }
+
+      renderScaleGuide(grandDoughTotal);
+
+      ingredients.forEach(item => {
+        if (isPercentLocked) {
+          const inputDough = document.getElementById(`input-dough-${item.id}`);
+          if (inputDough && document.activeElement !== inputDough) {
+            inputDough.value = item.doughG !== 0 ? Math.round(item.doughG * 10) / 10 : '';
+          }
+        }
+
+        if (!isPercentLocked) {
+          const cellPct = document.getElementById(`cell-pct-${item.id}`);
+          if (cellPct) cellPct.textContent = `${item.pct}%`;
+        }
+
+        if (isDetailView) {
+          let lVal = (item === ingredients[0] && useLevain) ? Math.round(levainFlour) : 0;
+          if (item.type === 'water' && item === ingredients.find(x => x.type === 'water') && useLevain) {
+            lVal = Math.round(levainWater);
+          }
+          const cL = document.getElementById(`cell-levain-${item.id}`);
+          const cT = document.getElementById(`cell-total-${item.id}`);
+          if (cL) cL.textContent = lVal;
+          if (cT) cT.textContent = Math.round((Number(item.doughG) || 0) + lVal);
+        }
+      });
+    }
+
+    function renderScaleGuide(grandTotal) {
+      const list = document.getElementById('scale-guide-list');
+      list.innerHTML = '';
+
+      ingredients.forEach(i => {
+        if (i.doughG > 0) {
+          const div = document.createElement('div');
+          div.className = 'sg-item';
+          div.innerHTML = `${i.name}: <strong>${Math.round(i.doughG)}g</strong>`;
+          list.appendChild(div);
+        }
+      });
+
+      if (useLevain && levainWeight > 0) {
+        const div = document.createElement('div');
+        div.className = 'sg-item';
+        div.style.borderColor = '#E0CFAC';
+        div.style.background = '#FFFDF7';
+        div.innerHTML = `🏺 르방: <strong style="color:#8C531B;">${levainWeight}g</strong>`;
+        list.appendChild(div);
+      }
+    }
+
+    function toggleMode() {
+      isPercentLocked = !isPercentLocked;
+      updateModeUI();
+
+      if (isPercentLocked) {
+        let flourSum = ingredients.filter(i => i.type === 'flour').reduce((a, b) => a + (Number(b.doughG)||0), 0);
+        let doughSum = ingredients.reduce((a, b) => a + (Number(b.doughG)||0), 0) + (useLevain ? levainWeight : 0);
+        document.getElementById('scale-target-flour').value = Math.round(flourSum);
+        document.getElementById('scale-target-dough').value = Math.round(doughSum);
+        showToast('🔒 % 비율이 고정되었습니다! 총 반죽량이나 밀가루를 입력해 보세요.');
+      } else {
+        showToast('🔓 그램(g) 직접 입력 모드로 전환되었습니다.');
+      }
+
+      buildTableDOM();
+      updateCalculations();
+    }
+
+    function updateModeUI() {
+      const btn = document.getElementById('mode-toggle-btn');
+      const title = document.getElementById('mode-status-title');
+      const desc = document.getElementById('mode-status-desc');
+      const scaleBox = document.getElementById('scale-box');
+
+      if (isPercentLocked) {
+        btn.textContent = '🔓 g 직접 입력으로 전환';
+        btn.classList.add('locked');
+        title.innerHTML = '<span>🔒</span> <span>% 비율 고정 스케일링 모드</span>';
+        desc.textContent = '배합비는 고정되고, 목표량에 따라 모든 재료의 g이 자동 계산됩니다';
+        scaleBox.classList.add('active');
+      } else {
+        btn.textContent = '🔒 % 비율 고정하기';
+        btn.classList.remove('locked');
+        title.innerHTML = '<span>⚖️</span> <span>그램(g) 직접 입력 모드</span>';
+        desc.textContent = '무게를 입력하면 베이커스 %가 실시간 계산됩니다';
+        scaleBox.classList.remove('active');
+      }
+    }
+
+    function scaleByTotalFlour(targetFlourVal) {
+      const targetFlour = Number(targetFlourVal) || 0;
+      if (targetFlour <= 0) return;
+
+      ingredients.forEach(i => {
+        i.doughG = Math.round((targetFlour * (i.pct / 100)) * 10) / 10;
+      });
+
+      updateCalculations();
+
+      let totalDough = ingredients.reduce((a, b) => a + (Number(b.doughG)||0), 0) + (useLevain ? levainWeight : 0);
+      const targetDoughInput = document.getElementById('scale-target-dough');
+      if (document.activeElement !== targetDoughInput) {
+        targetDoughInput.value = Math.round(totalDough);
+      }
+    }
+
+    function scaleByTotalDough(targetDoughVal) {
+      const targetDough = Number(targetDoughVal) || 0;
+      if (targetDough <= 0) return;
+
+      let totalPctSum = 0;
+      ingredients.forEach(i => totalPctSum += Number(i.pct) || 0);
+      if (totalPctSum <= 0) return;
+
+      let netTargetDough = targetDough - (useLevain ? levainWeight : 0);
+      let calculatedFlour = (netTargetDough / (totalPctSum / 100));
+
+      const targetFlourInput = document.getElementById('scale-target-flour');
+      if (document.activeElement !== targetFlourInput) {
+        targetFlourInput.value = Math.round(calculatedFlour);
+      }
+
+      scaleByTotalFlour(calculatedFlour);
+    }
+
+    let ddtUseLevain = false;
+
+    function toggleDdtLevain() {
+      ddtUseLevain = !ddtUseLevain;
+      const badge = document.getElementById('badge-ddt-levain');
+      const body = document.getElementById('ddt-levain-body');
+      if (ddtUseLevain) {
+        badge.textContent = '포함 (4요소)';
+        badge.className = 'levain-status-badge on';
+        body.style.display = 'block';
+      } else {
+        badge.textContent = '선택 (OFF)';
+        badge.className = 'levain-status-badge';
+        body.style.display = 'none';
+      }
+      calcDdt();
+    }
+
+    function setFriction(val, btn) {
+      document.getElementById('ddt-friction').value = val.toFixed(1);
+      document.querySelectorAll('.f-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      calcDdt();
+    }
+
+    function calcDdt() {
+      const target = Number(document.getElementById('ddt-target').value) || 25.0;
+      const room = Number(document.getElementById('ddt-room').value) || 22.0;
+      const flour = Number(document.getElementById('ddt-flour').value) || 21.0;
+      const friction = Number(document.getElementById('ddt-friction').value) || 8.0;
+      const starter = Number(document.getElementById('ddt-starter').value) || 24.0;
+
+      let waterTemp = 0;
+      let formulaText = '';
+
+      if (ddtUseLevain) {
+        waterTemp = (target * 4) - (room + flour + starter + friction);
+        formulaText = `(목표 ${target}°C × 4) - (실온 ${room} + 밀온 ${flour} + 르방 ${starter} + 마찰열 ${friction})`;
+      } else {
+        waterTemp = (target * 3) - (room + flour + friction);
+        formulaText = `(목표 ${target}°C × 3) - (실온 ${room} + 밀온 ${flour} + 마찰열 ${friction})`;
+      }
+
+      waterTemp = Math.round(waterTemp * 10) / 10;
+      document.getElementById('res-water-temp').textContent = `${waterTemp.toFixed(1)} °C`;
+      document.getElementById('res-water-formula').textContent = formulaText;
+
+      const statusEl = document.getElementById('res-water-status');
+      if (waterTemp >= 35) {
+        statusEl.className = 'rb-status ice';
+        statusEl.textContent = '⚠️ 온수 필요 (이스트 사멸 주의, 40°C 이하 유지)';
+      } else if (waterTemp >= 15 && waterTemp < 35) {
+        statusEl.className = 'rb-status normal';
+        statusEl.textContent = '✅ 상온수 투입';
+      } else if (waterTemp >= 5 && waterTemp < 15) {
+        statusEl.className = 'rb-status cold';
+        statusEl.textContent = '❄️ 냉장 찬물 투입 필요';
+      } else {
+        statusEl.className = 'rb-status ice';
+        statusEl.textContent = '🧊 얼음 투입 권장 (아래 얼음 계산기 참조)';
+      }
+
+      calcIce(waterTemp);
+    }
+
+    function toggleIceCard() {
+      const card = document.getElementById('ice-card');
+      const arrow = document.getElementById('ice-arrow');
+      card.classList.toggle('open');
+      arrow.textContent = card.classList.contains('open') ? '▲ 접기' : '▼ 펼치기';
+    }
+
+    function calcIce(calculatedWaterTemp) {
+      if (calculatedWaterTemp === undefined) {
+        const text = document.getElementById('res-water-temp').textContent;
+        calculatedWaterTemp = parseFloat(text) || 20.0;
+      }
+
+      const totalWater = Number(document.getElementById('ice-total-water').value) || 700;
+      const tapTemp = Number(document.getElementById('ice-tap-temp').value) || 20.0;
+
+      if (calculatedWaterTemp < tapTemp && totalWater > 0) {
+        let iceWeight = totalWater * (tapTemp - calculatedWaterTemp) / (tapTemp + 80);
+        iceWeight = Math.max(0, Math.round(iceWeight));
+        let liquidWater = Math.max(0, totalWater - iceWeight);
+
+        document.getElementById('res-ice-weight').textContent = `${iceWeight} g`;
+        document.getElementById('res-water-weight').textContent = `${liquidWater} g`;
+      } else {
+        document.getElementById('res-ice-weight').textContent = `0 g (불필요)`;
+        document.getElementById('res-water-weight').textContent = `${totalWater} g`;
+      }
+    }
+
+    function switchMainTab(tab) {
+      document.querySelectorAll('.nav-tab').forEach((el, idx) => {
+        el.classList.toggle('active', (tab === 'baker' && idx === 0) || (tab === 'ddt' && idx === 1));
+      });
+      document.getElementById('tab-baker').classList.toggle('active', tab === 'baker');
+      document.getElementById('tab-ddt').classList.toggle('active', tab === 'ddt');
+    }
+
+    function sendToDdt() {
+      let sumWater = 0;
+      ingredients.forEach(i => { if (i.type === 'water') sumWater += Number(i.doughG) || 0; });
+      if (useLevain && levainWeight > 0) {
+        sumWater += (levainWeight * (levainHydration / 100) / (1 + (levainHydration / 100)));
+      }
+      document.getElementById('ice-total-water').value = Math.round(sumWater) || 700;
+      calcIce();
+      switchMainTab('ddt');
+      showToast(`총 물량 ${Math.round(sumWater)}g이 수온 계산기에 자동 반영되었습니다!`);
+    }
+
+    function copyRecipeText() {
+      let flourSum = ingredients.filter(i => i.type === 'flour').reduce((a, b) => a + (Number(b.doughG)||0), 0);
+      let waterSum = ingredients.filter(i => i.type === 'water').reduce((a, b) => a + (Number(b.doughG)||0), 0);
+      let doughSum = ingredients.reduce((a, b) => a + (Number(b.doughG)||0), 0) + (useLevain ? levainWeight : 0);
+
+      let text = `[바른밀 배합표] 베이커스 퍼센트\n`;
+      text += `• 총 밀가루: ${Math.round(flourSum)}g (100%)\n`;
+      text += `• 총 반죽량: ${Math.round(doughSum)}g\n`;
+      if (useLevain) {
+        text += `• 사워도우 르방: ${levainWeight}g (수분율 ${levainHydration}%)\n`;
+      }
+      text += `━━━━━━━━━━━━━━━━━━━━━\n[본반죽 계량]\n`;
+      ingredients.forEach(i => {
+        text += `• ${i.name}: ${Math.round(i.doughG)}g (${i.pct}%)\n`;
+      });
+
+      copyToClipboard(text, '레시피가 클립보드에 복사되었습니다!');
+    }
+
+    function copyDdtText() {
+      const target = document.getElementById('ddt-target').value;
+      const resTemp = document.getElementById('res-water-temp').textContent;
+      const iceWeight = document.getElementById('res-ice-weight').textContent;
+      const waterWeight = document.getElementById('res-water-weight').textContent;
+
+      let text = `[바른밀 제빵소 DDT 수온 계산 결과]\n`;
+      text += `• 목표 반죽 온도: ${target}°C\n`;
+      text += `• 필요 물온도: ${resTemp}\n`;
+      text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      text += `🧊 얼음 투입량: ${iceWeight}\n`;
+      text += `💧 찬물 투입량: ${waterWeight}\n`;
+
+      copyToClipboard(text, '수온 및 얼음 계량값이 복사되었습니다!');
+    }
+
+    function copyToClipboard(text, msg) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => showToast(msg));
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast(msg);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      buildTableDOM();
+      updateCalculations();
+      calcDdt();
+    });
+  </script>
+</body>
+</html>
