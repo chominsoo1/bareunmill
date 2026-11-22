@@ -372,6 +372,7 @@
       <div class="rbox hot"><div class="rl">얼음</div><div class="rv"><span id="ice-out">42</span><small>g</small></div><div class="rs" id="ice-out-sub">전체의 6%</div></div>
       <div class="rbox"><div class="rl">상온 물</div><div class="rv"><span id="water-out">658</span><small>g</small></div><div class="rs" id="water-out-sub">수돗물 20°C</div></div>
     </div>
+    <div class="note" id="ice-note" style="margin:8px 0 0"></div>
   </div>
 
   <details class="fx">
@@ -844,7 +845,7 @@ function calcDdt(){
   else if(wt > 35) status = '⚠️ 온수 필요 (40°C 이하)';
   else if(wt > tapNow + 0.5) status = '수돗물보다 ' + (wt-tapNow).toFixed(1) + '°C 높음 — 데운 물';
   else if(wt >= tapNow - 0.5) status = '상온수 그대로 사용';
-  else if(wt >= 12) status = '찬물·냉수 사용';
+  else if(wt >= 12) status = '찬물·냉수 + 얼음 약간';
   else if(wt >= 0) status = '🧊 얼음물 필요';
   else status = '🧊 얼음으로도 부족';
   $('ddt-status').textContent = status;
