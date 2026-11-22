@@ -415,7 +415,8 @@ function calcConv(){
 
   const tTemp = convTemp(T, srcOven, tgtOven);
   const tTime = convTime(t, srcOven, tgtOven);
-  const pre = clampT(round5((tTemp || 0) + g.pre));
+  const preCap = (tgtOven === 'home') ? 250 : 290;
+  const pre = clampT(round5(Math.min((tTemp || 0) + g.pre, preCap)));
 
   $('r-temp').textContent = tTemp ? tTemp : '—';
   $('r-pre').textContent  = tTemp ? pre : '—';
@@ -425,7 +426,7 @@ function calcConv(){
   const dTime = tTime && t ? (tTime - Math.round(t)) : 0;
 
   $('r-temp-s').textContent = (srcOven === tgtOven) ? '보정 없음' : (sign(Math.round(dT2)) + '°C');
-  $('r-pre-s').textContent  = '+' + g.pre + '°C 예열';
+  $('r-pre-s').textContent  = (tTemp && pre < round5(tTemp + g.pre)) ? '최대 ' + preCap + '°C' : ('+' + g.pre + '°C 예열');
   $('r-time-s').textContent = (srcOven === tgtOven) ? '그대로' : (dTime === 0 ? '변화 없음' : sign(dTime) + '분');
 
   /* 데크 상·하불 분리 */
@@ -467,7 +468,7 @@ function calcConv(){
     warn = '🌀 <b>컨벡션오븐</b>은 팬 배열이 결과를 좌우합니다. 팬을 겹쳐 꽂거나 벽에 붙이지 마세요.';
   }
   if(Math.abs(dT2) >= 25){
-    warn = '⚠️ 온도 차가 <b>' + Math.abs(Math.round(dT2)) + '°C</b>로 큽니다. 첫 판은 계산값보다 <b>5°C 낮게</b> 시작해 색을 보고 올리세요.<br>' + warn;
+    warn = '⚠️ 온도 차가 <b>' + Math.abs(Math.round(dT2)) + '°C</b>로 큽니다. 첫 판은 계산값보다 <b>5°C 낮게</b> 시작해 색을 보고 올리세요.<br> ' + warn;
   }
   $('conv-warn').innerHTML = warn;
 }
@@ -479,7 +480,8 @@ function copyConv(){
   const s = OVENS[srcOven], g = OVENS[tgtOven];
   const tTemp = convTemp(T, srcOven, tgtOven);
   const tTime = convTime(t, srcOven, tgtOven);
-  const pre = clampT(round5(tTemp + g.pre));
+  const preCap = (tgtOven === 'home') ? 250 : 290;
+  const pre = clampT(round5(Math.min(tTemp + g.pre, preCap)));
   let txt = '[바른밀 오븐 변환 · ' + g.name + ']\n';
   txt += '• 레시피: ' + s.name + ' ' + (T||'—') + '°C / ' + (t||'—') + '분\n';
   txt += '• 예열: ' + pre + '°C (10분 이상)\n';
