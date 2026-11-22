@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오븐 온도·시간 변환기 | 바른밀제빵소</title>
+<meta name="description" content="데크오븐·컨벡션오븐·가정용 전기오븐·에어프라이어 레시피 온도와 굽기 시간을 내 오븐에 맞게 환산하고, 소금빵·식빵·사워도우·바게트 등 품목별 굽기 기준을 확인하세요.">
+<meta property="og:title" content="오븐 온도·시간 변환기 🔥">
+<meta property="og:description" content="레시피 오븐 → 내 오븐 온도·시간 환산 + 품목별 굽기 기준 (바른밀제빵소)">
+<meta property="og:type" content="website">
+<style>
+  :root{
+    --bg:#F8F5F0; --card:#FFFFFF; --primary:#965B28; --primary-light:#EFE6DC; --primary-dark:#643914;
+    --text:#241D17; --sub:#665B52; --muted:#9E948C; --border:#E8DFD5;
+    --amber:#FFF9ED; --amber-b:#F3E0B5; --amber-t:#7A5E2E;
+    --font:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font);-webkit-tap-highlight-color:transparent}
+  body{background:var(--bg);color:var(--text);line-height:1.45;font-size:14px;padding:10px 12px 20px;max-width:560px;margin:0 auto}
+
+  header{text-align:center;margin-bottom:8px}
+  .badge{display:inline-block;background:var(--primary-light);color:var(--primary-dark);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:4px}
+  h1{font-size:19px;font-weight:800;letter-spacing:-.6px;color:var(--primary-dark)}
+  .hdesc{font-size:11.5px;color:var(--sub);margin-top:2px}
+
+  .tabs{display:grid;grid-template-columns:50% 50%;gap:6px;margin-bottom:8px}
+  .tab{background:#fff;border:1px solid var(--border);border-radius:11px;padding:9px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--sub);transition:background .15s,color .15s,border-color .15s}
+  .tab .em{font-size:17px;line-height:1.2}
+  .tab .nm{font-size:12.5px;font-weight:800;letter-spacing:-.3px;white-space:nowrap}
+  .tab.on{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:10px 11px;box-shadow:0 2px 6px rgba(40,25,10,.04);margin-bottom:7px}
+  .lab{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--primary-dark);margin-bottom:7px}
+  .lab .hint{font-size:10.5px;font-weight:600;color:var(--muted);white-space:nowrap}
+  .subtle{font-size:11px;color:var(--muted);margin-top:3px}
+
+  .seg{display:flex;background:#EFEBE5;border-radius:10px;padding:3px;gap:3px}
+  .seg button{flex:1;border:0;background:transparent;border-radius:8px;padding:7px 3px;font-size:12.5px;font-weight:700;color:var(--sub);font-family:inherit;cursor:pointer;line-height:1.25;transition:background .15s,color .15s}
+  .seg button.on{background:#fff;color:var(--primary-dark);box-shadow:0 1px 3px rgba(40,25,10,.12)}
+  .seg button small{display:block;font-size:9.5px;font-weight:600;color:var(--muted);margin-top:1px}
+  .seg button.on small{color:var(--primary)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+  .grid2 button{border:1px solid var(--border);background:#fff;border-radius:9px;padding:8px 4px;font-size:12.5px;font-weight:700;color:var(--sub);font-family:inherit;cursor:pointer;line-height:1.25;transition:background .15s,color .15s,border-color .15s}
+  .grid2 button small{display:block;font-size:9.5px;font-weight:600;color:var(--muted);margin-top:2px}
+  .grid2 button.on{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff}
+  .grid2 button.on small{color:#E7D6C3}
+
+  .irow{display:flex;align-items:center;gap:8px;background:#FCFAF7;border:1px solid var(--border);border-radius:10px;padding:4px 11px;margin-top:6px}
+  .irow input{flex:1;min-width:0;width:100%;border:0;background:transparent;font-size:22px;font-weight:800;color:var(--text);font-family:inherit;outline:none;text-align:right;padding:0;line-height:1.3}
+  .irow .unit{flex:0 0 auto;font-size:12px;font-weight:700;color:var(--muted)}
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+  .duo{display:flex;gap:8px}
+  .duo>div{flex:1;min-width:0}
+  .tlab{font-size:10.5px;font-weight:700;color:var(--muted);margin:0 0 1px 2px}
+
+  .presets{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;align-items:center}
+  .presets .pl{font-size:10.5px;font-weight:700;color:var(--muted);margin-right:1px}
+  .presets button{border:1px solid var(--border);background:#fff;border-radius:14px;padding:4px 11px;font-size:12px;font-weight:700;color:var(--primary-dark);font-family:inherit;cursor:pointer}
+  .presets button:active{background:var(--primary-light)}
+
+  .res{display:flex;gap:7px;margin-bottom:7px}
+  .rbox{flex:1;min-width:0;background:#fff;border:1px solid var(--border);border-radius:11px;padding:8px 10px}
+  .rbox.hot{background:var(--primary-light);border-color:#E0CDB8}
+  .rl{font-size:11px;font-weight:700;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rbox.hot .rl{color:var(--primary-dark)}
+  .rv{font-size:23px;font-weight:900;color:var(--primary-dark);letter-spacing:-.8px;line-height:1.15;margin-top:1px;white-space:nowrap}
+  .rv small{font-size:11.5px;font-weight:700;color:var(--sub);margin-left:2px;letter-spacing:0}
+  .rs{font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .res.trio .rbox{padding:7px 8px}
+  .res.trio .rl{font-size:10.5px}
+  .res.trio .rv{font-size:19px;letter-spacing:-.5px}
+  .res.trio .rv small{font-size:10px;margin-left:1px}
+  .res.trio .rs{font-size:9.3px;letter-spacing:-.2px}
+  .res.duo2 .rv{font-size:21px}
+
+  .split{background:#fff;border:1px dashed var(--primary);border-radius:10px;padding:7px 9px;font-size:11.5px;color:var(--primary-dark);margin-bottom:7px;line-height:1.5}
+
+  .note{font-size:11px;color:var(--sub);background:#F7F3EC;border-radius:8px;padding:7px 9px;margin-bottom:6px;line-height:1.5}
+  .note b{color:var(--primary-dark)}
+  .tip{font-size:10.9px;color:var(--amber-t);background:var(--amber);border:1px solid var(--amber-b);border-radius:8px;padding:7px 9px;margin-bottom:7px;line-height:1.52}
+  .tip b{font-weight:800}
+
+  .tips{list-style:none}
+  .tips li{position:relative;padding:5px 0 5px 14px;font-size:11.3px;color:var(--sub);border-bottom:1px dashed #F0E6DA;line-height:1.5}
+  .tips li:last-child{border-bottom:0;padding-bottom:2px}
+  .tips li:before{content:'•';position:absolute;left:2px;top:5px;color:var(--primary);font-weight:900}
+  .tips li b{color:var(--primary-dark)}
+
+  .stor{padding:7px 0;border-bottom:1px dashed #F0E6DA;font-size:11.5px;color:var(--sub);line-height:1.5}
+  .stor:last-child{border-bottom:0;padding-bottom:2px}
+  .stor-t{font-size:12px;font-weight:800;color:var(--primary-dark)}
+  .stor-v{margin-top:2px}
+  .stor-w{font-size:10.8px;color:var(--muted);margin-top:2px}
+
+  .copy{display:block;width:100%;border:0;background:var(--primary-dark);color:#fff;border-radius:11px;padding:11px;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer}
+  .copy:active{opacity:.88}
+
+  .pane{display:none}
+  .pane.on{display:block}
+
+  .foot{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+  .foot a{font-size:11.5px;font-weight:700;color:var(--primary-dark);background:#fff;border:1px solid var(--border);border-radius:14px;padding:6px 12px;text-decoration:none}
+  .foot a:active{background:var(--primary-light)}
+
+  #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(90px);background:rgba(36,29,23,.93);color:#fff;padding:10px 18px;border-radius:20px;font-size:12.5px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:99;transition:transform .25s cubic-bezier(.175,.885,.32,1.275);pointer-events:none;white-space:nowrap;max-width:92vw}
+  #toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">🔥 바른밀제빵소 실전 도구</div>
+  <h1>오븐 온도·시간 변환기</h1>
+  <div class="hdesc">레시피 오븐을 내 오븐으로 바꿔 굽기</div>
+</header>
+
+<nav class="tabs">
+  <div class="tab on" id="tab-conv" onclick="setTab('conv')"><span class="em">🔥</span><span class="nm">오븐 타입 변환</span></div>
+  <div class="tab" id="tab-item" onclick="setTab('item')"><span class="em">🍞</span><span class="nm">품목별 굽기 기준</span></div>
+</nav>
+
+<!-- ============ 탭 1 · 오븐 타입 변환 ============ -->
+<section class="pane on" id="pane-conv">
+  <div class="card">
+    <div class="lab"><span>레시피 기준 오븐</span><span class="hint">레시피에 적힌 오븐</span></div>
+    <div class="seg" id="src-seg">
+      <button class="on" onclick="setSrc('deck',0)">데크오븐<small>상·하불</small></button>
+      <button onclick="setSrc('conv',1)">컨벡션<small>열풍</small></button>
+      <button onclick="setSrc('home',2)">가정용 전기<small>상하 히터</small></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>레시피 온도 · 굽기 시간</span><span class="hint" id="src-hint">데크 상불 기준</span></div>
+    <div class="duo">
+      <div>
+        <div class="tlab">온도</div>
+        <div class="irow">
+          <input id="in-temp" type="number" inputmode="decimal" value="220" oninput="calcConv()">
+          <span class="unit">°C</span>
+        </div>
+      </div>
+      <div>
+        <div class="tlab">굽기 시간</div>
+        <div class="irow">
+          <input id="in-time" type="number" inputmode="decimal" value="15" oninput="calcConv()">
+          <span class="unit">분</span>
+        </div>
+      </div>
+    </div>
+    <div class="presets" id="temp-presets"></div>
+    <div class="presets" id="time-presets"></div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>내가 쓰는 오븐</span><span class="hint">바꿀 대상</span></div>
+    <div class="grid2" id="tgt-grid">
+      <button class="on" onclick="setTgt('conv')">🌀 컨벡션오븐<small>열풍 순환</small></button>
+      <button onclick="setTgt('deck')">🔥 데크오븐<small>상·하불</small></button>
+      <button onclick="setTgt('home')">🏠 가정용 전기오븐<small>상하 히터</small></button>
+      <button onclick="setTgt('air')">💨 에어프라이어<small>강한 열풍</small></button>
+    </div>
+  </div>
+
+  <div class="res trio">
+    <div class="rbox hot">
+      <div class="rl">추천 굽기</div>
+      <div class="rv"><span id="r-temp">200</span><small>°C</small></div>
+      <div class="rs" id="r-temp-s">-20°C</div>
+    </div>
+    <div class="rbox">
+      <div class="rl">추천 예열</div>
+      <div class="rv"><span id="r-pre">220</span><small>°C</small></div>
+      <div class="rs" id="r-pre-s">+20°C</div>
+    </div>
+    <div class="rbox">
+      <div class="rl">예상 시간</div>
+      <div class="rv"><span id="r-time">14</span><small>분</small></div>
+      <div class="rs" id="r-time-s">-1분</div>
+    </div>
+  </div>
+
+  <div class="split" id="conv-split" style="display:none"></div>
+
+  <div class="note" id="conv-note"></div>
+
+  <div class="card">
+    <div class="lab"><span>굽기 중 체크 팁</span><span class="hint" id="tips-hint">컨벡션 기준</span></div>
+    <ul class="tips" id="conv-tips"></ul>
+  </div>
+
+  <div class="tip" id="conv-warn"></div>
+
+  <button class="copy" onclick="copyConv()">📋 결과 복사하기</button>
+</section>
+
+<!-- ============ 탭 2 · 품목별 굽기 기준 ============ -->
+<section class="pane" id="pane-item">
+  <div class="card">
+    <div class="lab"><span>품목 선택</span><span class="hint">1인분·1개 기준</span></div>
+    <div class="grid2" id="item-grid"></div>
+    <div class="subtle">※ 기본값은 데크오븐(상·하불) 기준입니다</div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>내 오븐 타입</span><span class="hint">같은 품목, 다른 오븐</span></div>
+    <div class="seg" id="ioven-seg">
+      <button class="on" onclick="setIOven('deck',0)">데크 상·하불</button>
+      <button onclick="setIOven('conv',1)">컨벡션</button>
+      <button onclick="setIOven('home',2)">가정용 전기</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span id="item-name">소금빵 60g</span><span class="hint" id="item-oven-hint">데크 상·하불</span></div>
+    <div class="res duo2">
+      <div class="rbox hot" style="flex:1.35">
+        <div class="rl" id="item-temp-label">추천 온도</div>
+        <div class="rv"><span id="item-temp">상 225 / 하 195</span></div>
+        <div class="rs" id="item-temp-s">상불·하불 따로</div>
+      </div>
+      <div class="rbox">
+        <div class="rl">굽기 시간</div>
+        <div class="rv"><span id="item-time">13</span><small>분</small></div>
+        <div class="rs" id="item-time-s">중간 확인</div>
+      </div>
+    </div>
+    <div class="res duo2" style="margin-bottom:3px">
+      <div class="rbox" style="flex:1">
+        <div class="rl">스팀</div>
+        <div class="rv" style="font-size:15px;letter-spacing:-.3px;line-height:1.35" id="item-steam">없음</div>
+      </div>
+      <div class="rbox" style="flex:1.35">
+        <div class="rl">익힘 포인트</div>
+        <div class="rv" style="font-size:12.5px;font-weight:800;letter-spacing:-.2px;line-height:1.35" id="item-doneness">바닥 바삭·윗면 진한 갈색</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>🍞 굽기 핵심 팁</span><span class="hint" id="item-tips-hint">데크 기준</span></div>
+    <ul class="tips" id="item-tips"></ul>
+  </div>
+
+  <div class="tip">
+    🔍 오븐마다 <b>열량과 단열 차이</b>가 크므로 첫 테스트 시 <b>종료 2~3분 전 색을 보고</b> 미세 조정하세요.<br>
+    🌡️ 오븐 온도계로 실제 온도를 한 번 재 보면 기종 편차(표기 대비 10~20°C)를 알 수 있어요.
+  </div>
+
+  <button class="copy" onclick="copyItem()">📋 결과 복사하기</button>
+</section>
+
+<div class="foot">
+  <a href="../">🏠 바른밀 링크</a>
+  <a href="../convert/">🥛 만능 환산기</a>
+  <a href="../bake/">⚖️ 분할·르방</a>
+  <a href="https://litt.ly/bareunmill">🔗 공식 프로필</a>
+</div>
+
+<div id="toast">복사되었습니다!</div>
+
+<script>
+/* ---------- 공통 ---------- */
+function $(id){ return document.getElementById(id); }
+function num(el){
+  if(!el) return 0;
+  const v = String(el.value||'').replace(/,/g,'').trim();
+  const f = parseFloat(v);
+  return isFinite(f) ? f : 0;
+}
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ t.classList.remove('show'); }, 1900);
+}
+function legacyCopy(text, msg){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly','');
+  ta.style.position = 'fixed'; ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select(); ta.setSelectionRange(0, ta.value.length);
+  try{ document.execCommand('copy'); toast(msg||'복사되었습니다!'); }
+  catch(e){ toast('복사 실패 — 길게 눌러 선택해 주세요'); }
+  document.body.removeChild(ta);
+}
+function copyText(text, msg){
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(function(){ toast(msg||'복사되었습니다!'); })
+      .catch(function(){ legacyCopy(text,msg); });
+  } else {
+    legacyCopy(text,msg);
+  }
+}
+function pick(segId, idx){
+  const el = $(segId);
+  if(!el) return;
+  Array.prototype.forEach.call(el.children, function(b,i){ b.classList.toggle('on', i===idx); });
+}
+function sign(n){ return (n>0?'+':'') + n; }
+
+/* 오븐별 열량 계수(h) · 시간 계수(tf) · 예열 오버슈트(pre) */
+const OVENS = {
+  deck:{ name:'데크오븐',        short:'데크',      h:1.00, tf:1.00, pre:20 },
+  conv:{ name:'컨벡션오븐',      short:'컨벡션',    h:1.10, tf:0.95, pre:20 },
+  home:{ name:'가정용 전기오븐', short:'가정용',    h:0.95, tf:1.12, pre:15 },
+  air: { name:'에어프라이어',    short:'에어프라이어', h:1.12, tf:0.78, pre:10 }
+};
+const DAMP = 0.75;      /* 오븐 종류가 멀어질수록 보정이 과해지지 않게 눌러주는 지수 */
+const MAX_DELTA = 25;   /* 어떤 조합이든 온도 보정은 ±25°C를 넘기지 않음 */
+
+function round5(x){ return Math.round(x/5)*5; }
+function clampT(x){ return Math.max(100, Math.min(290, x)); }
+function convTemp(T, src, tgt){
+  T = Number(T)||0;
+  if(!T) return 0;
+  if(src === tgt) return round5(T);
+  const ratio = Math.pow(OVENS[src].h / OVENS[tgt].h, DAMP);
+  let delta = T * ratio - T;
+  if(delta >  MAX_DELTA) delta =  MAX_DELTA;
+  if(delta < -MAX_DELTA) delta = -MAX_DELTA;
+  return clampT(round5(T + delta));
+}
+function convTime(t, src, tgt){
+  t = Number(t)||0;
+  if(!t) return 0;
+  if(src === tgt) return Math.round(t);
+  return Math.max(1, Math.round(t * OVENS[tgt].tf / OVENS[src].tf));
+}
+
+/* ---------- 탭 ---------- */
+function setTab(t){
+  ['conv','item'].forEach(function(id){
+    $('tab-'+id).classList.toggle('on', id===t);
+    $('pane-'+id).classList.toggle('on', id===t);
+  });
+  window.scrollTo(0,0);
+}
+
+/* ---------- 탭 1 : 오븐 타입 변환 ---------- */
+let srcOven = 'deck';
+let tgtOven = 'conv';
+
+const TEMP_PRESETS = [160, 180, 200, 220, 240];
+const TIME_PRESETS = [8, 10, 12, 15, 20, 30];
+
+const CONV_TIPS = {
+  deck:[
+    '<b>상불·하불을 따로</b> 세팅하고, 예열은 표기 온도까지 20~30분 넉넉히 올리세요.',
+    '넣을 때 <b>스팀 3~5초</b>(또는 물 뿌림)로 껍질을 얇게 — 문은 바로 닫습니다.',
+    '8~10분 뒤 <b>앞뒤 트레이를 바꿔</b> 화력 편차를 잡으세요.',
+    '바닥이 세게 구워지면 <b>하불만 10°C</b> 내리고, 윗색이 빠르면 <b>호일</b>을 덮으세요.'
+  ],
+  conv:[
+    '열풍 순환 때문에 윗색이 <b>15~20°C 빠르게</b> 오릅니다 — 표기보다 낮게 시작하세요.',
+    '팬은 <b>중앙보다 한 칸 아래</b>에, 팬 사이 간격을 띄워 열풍이 지나가게 하세요.',
+    '뒤쪽이 센 모델이 많으니 <b>8~10분에 팬을 180°</b> 돌리세요.',
+    '윗색이 먼저 오르면 <b>호일을 덮고</b>, 스팀 기능이 없으면 물 스프레이로 대신하세요.'
+  ],
+  home:[
+    '예열은 표기 온도까지 <b>15분 이상</b>, 문은 최대한 적게 여세요(열 손실이 큽니다).',
+    '중간에 <b>팬을 돌려</b> 주고, 바닥이 약한 모델은 팬을 한 칸 아래로 내리세요.',
+    '상부 히터가 가까워 윗면이 타면 <b>호일</b>, 반대로 바닥이 안 익으면 아래 칸에서 2~3분 더.',
+    '문을 열었을 때 온도가 <b>20~30°C</b> 떨어지니 확인은 한 번에 몰아서 하세요.'
+  ],
+  air:[
+    '바스켓을 <b>3~5분 예열</b>하고, 반죽은 겹치지 않게 <b>한 층</b>으로만 넣으세요.',
+    '절반 시점에 <b>한 번 뒤집거나 흔들어</b> 열이 고루 닿게 하세요.',
+    '시간은 <b>20~30% 짧게</b>, 온도는 <b>10~20°C 낮게</b> — 표기보다 먼저 확인하세요.',
+    '윗면이 빨리 타면 <b>포일</b>을 덮고, 양이 많으면 소량씩 나눠 굽는 게 균일합니다.'
+  ]
+};
+
+function renderPresets(){
+  const tb = $('temp-presets'); tb.innerHTML = '';
+  const tl = document.createElement('span'); tl.className='pl'; tl.textContent='온도';
+  tb.appendChild(tl);
+  TEMP_PRESETS.forEach(function(v){
+    const b = document.createElement('button'); b.textContent = v;
+    b.onclick = function(){ $('in-temp').value = v; calcConv(); };
+    tb.appendChild(b);
+  });
+  const nb = $('time-presets'); nb.innerHTML = '';
+  const nl = document.createElement('span'); nl.className='pl'; nl.textContent='시간';
+  nb.appendChild(nl);
+  TIME_PRESETS.forEach(function(v){
+    const b = document.createElement('button'); b.textContent = v;
+    b.onclick = function(){ $('in-time').value = v; calcConv(); };
+    nb.appendChild(b);
+  });
+}
+
+function setSrc(k, idx){
+  srcOven = k;
+  pick('src-seg', idx);
+  $('src-hint').textContent = (k==='deck') ? '데크 상불 기준' : (k==='conv' ? '컨벡션 기준' : '가정용 기준');
+  calcConv();
+}
+function setTgt(k){
+  tgtOven = k;
+  Array.prototype.forEach.call($('tgt-grid').children, function(b){
+    b.classList.toggle('on', b.getAttribute('data-ov') === k);
+  });
+  calcConv();
+}
+
+function calcConv(){
+  const T = num($('in-temp'));
+  const t = num($('in-time'));
+  const s = OVENS[srcOven], g = OVENS[tgtOven];
+
+  const tTemp = convTemp(T, srcOven, tgtOven);
+  const tTime = convTime(t, srcOven, tgtOven);
+  const pre = clampT(round5((tTemp || 0) + g.pre));
+
+  $('r-temp').textContent = tTemp ? tTemp : '—';
+  $('r-pre').textContent  = tTemp ? pre : '—';
+  $('r-time').textContent = tTime ? tTime : '—';
+
+  const dT2 = tTemp && T ? (tTemp - T) : 0;
+  const dTime = tTime && t ? (tTime - Math.round(t)) : 0;
+
+  $('r-temp-s').textContent = (srcOven === tgtOven) ? '보정 없음' : (sign(Math.round(dT2)) + '°C');
+  $('r-pre-s').textContent  = '+' + g.pre + '°C 예열';
+  $('r-time-s').textContent = (srcOven === tgtOven) ? '그대로' : (dTime === 0 ? '변화 없음' : sign(dTime) + '분');
+
+  /* 데크 상·하불 분리 */
+  if(tgtOven === 'deck' && tTemp){
+    $('conv-split').style.display = 'block';
+    $('conv-split').innerHTML = '🔥 데크는 <b>상불 ' + tTemp + '°C · 하불 ' + (tTemp-20) + '°C</b>로 나눠 세팅하세요' +
+      '<span style="color:var(--muted)"> (하불은 바닥 직접 열이라 20°C 낮게)</span>';
+  } else {
+    $('conv-split').style.display = 'none';
+  }
+
+  /* 요약 */
+  const rt = T ? (Math.round(T)) : '—';
+  if(T && t){
+    $('conv-note').innerHTML = (srcOven === tgtOven)
+      ? '<b>' + s.name + ' ' + rt + '°C ' + t + '분</b> → 같은 타입이라 온도·시간은 그대로입니다. 기종 편차만 확인하세요.'
+      : '<b>' + s.name + ' ' + rt + '°C ' + t + '분</b> → <b>' + g.name + ' ' + tTemp + '°C ' + tTime + '분</b>' +
+        ' <span style="color:var(--muted)">(온도 ' + sign(Math.round(dT2)) + '°C · 시간 ' + sign(dTime) + '분)</span>';
+  } else {
+    $('conv-note').innerHTML = '레시피 온도와 굽기 시간을 넣으면 환산됩니다.';
+  }
+
+  /* 팁 */
+  $('tips-hint').textContent = g.name + ' 기준';
+  const ul = $('conv-tips'); ul.innerHTML = '';
+  CONV_TIPS[tgtOven].forEach(function(txt){
+    const li = document.createElement('li'); li.innerHTML = txt; ul.appendChild(li);
+  });
+
+  /* 주의 */
+  let warn = '';
+  if(tgtOven === 'air'){
+    warn = '💨 <b>에어프라이어</b>는 기종·용량 편차가 가장 큽니다. 첫 판은 표기에서 <b>10°C 더 낮춰</b> 2~3분 일찍 열어 보세요.';
+  } else if(tgtOven === 'home'){
+    warn = '🏠 <b>가정용 전기오븐</b>은 문을 열 때마다 열이 크게 빠집니다. 팬 회전은 한 번에 끝내고, 색은 유리창으로 확인하세요.';
+  } else if(tgtOven === 'deck'){
+    warn = '🔥 <b>데크오븐</b>은 트레이 위치(상·중·하단)와 화력 세기에 따라 편차가 큽니다. 첫 판은 중간 단에서 시작하세요.';
+  } else {
+    warn = '🌀 <b>컨벡션오븐</b>은 팬 배열이 결과를 좌우합니다. 팬을 겹쳐 꽂거나 벽에 붙이지 마세요.';
+  }
+  if(Math.abs(dT2) >= 25){
+    warn = '⚠️ 온도 차가 <b>' + Math.abs(Math.round(dT2)) + '°C</b>로 큽니다. 첫 판은 계산값보다 <b>5°C 낮게</b> 시작해 색을 보고 올리세요.<br>' + warn;
+  }
+  $('conv-warn').innerHTML = warn;
+}
+
+function copyConv(){
+  const T = num($('in-temp'));
+  const t = num($('in-time'));
+  if(!T || !t){ toast('온도와 시간을 먼저 입력해 주세요'); return; }
+  const s = OVENS[srcOven], g = OVENS[tgtOven];
+  const tTemp = convTemp(T, srcOven, tgtOven);
+  const tTime = convTime(t, srcOven, tgtOven);
+  const pre = clampT(round5(tTemp + g.pre));
+  let txt = '[바른밀 오븐 변환 · ' + g.name + ']\n';
+  txt += '• 레시피: ' + s.name + ' ' + (T||'—') + '°C / ' + (t||'—') + '분\n';
+  txt += '• 예열: ' + pre + '°C (10분 이상)\n';
+  if(tgtOven === 'deck'){
+    txt += '• 굽기: 상불 ' + tTemp + '°C / 하불 ' + (tTemp-20) + '°C\n';
+  } else {
+    txt += '• 굽기: ' + tTemp + '°C\n';
+  }
+  txt += '• 시간: ' + tTime + '분 (종료 2~3분 전 색 확인)\n';
+  const tips = CONV_TIPS[tgtOven];
+  txt += '• 체크: ' + tips[0].replace(/<\/?b>/g,'').replace(/<[^>]+>/g,'');
+  copyText(txt, '오븐 변환 결과가 복사되었습니다!');
+}
+
+/* ---------- 탭 2 : 품목별 굽기 기준 ---------- */
+/* 기본은 데크오븐 상·하불 기준 */
+const ITEMS = [
+  { id:'salt', name:'소금빵', w:'60g', up:225, low:195, t:13, steam:'없음',
+    done:'바닥 바삭·윗면 진한 갈색',
+    tips:[
+      '<b>하불을 살려</b> 바닥을 바삭하게 — 하불이 약하면 팬을 한 칸 아래로 내리세요.',
+      '버터가 흘러내리니 <b>유산지 두 겹</b>이나 홈팬을 쓰세요.',
+      '8분쯤 윗색이 진해지면 <b>호일</b>을 덮고, 꺼낸 뒤 1분 두었다가 옮기면 바닥이 덜 눅눅합니다.'
+    ]},
+  { id:'milk350', name:'식빵 미니', w:'350g', up:195, low:175, t:20, steam:'약하게',
+    done:'중심 92~95°C · 꼭대기 진한 갈색',
+    tips:[
+      '틀의 <b>80%까지만</b> 채우고 마지막 발효를 넉넉히 주세요.',
+      '미니는 시간이 짧아 <b>중심이 덜 익기 쉬움</b> — 꺼내서 두드려 맑은 소리가 나야 합니다.',
+      '꼭대기 색이 먼저 오르면 <b>호일</b>을 덮고 남은 시간을 채우세요.'
+    ]},
+  { id:'milk900', name:'식빵 풀사이즈', w:'900g', up:200, low:180, t:35, steam:'약하게',
+    done:'중심 92~95°C · 옆면까지 고루',
+    tips:[
+      '옆면까지 익도록 팬을 <b>오븐 중간보다 아래</b>에 넣으세요.',
+      '15분쯤 지나 <b>팬을 180°</b> 돌려 색을 균일하게.',
+      '꺼낸 뒤 <b>식힘망에 옆으로 눕혀</b> 1시간 이상 식혀야 주름이 안 생깁니다.'
+    ]},
+  { id:'sour', name:'사워도우', w:'600~800g', up:250, low:220, t:42, steam:'강하게 (초기 15~20분)',
+    done:'껍질 짙은 갈색 · 속 96°C 이상',
+    tips:[
+      '<b>250°C로 충분히 예열</b> 후 넣고 스팀을 세게 — 껍질이 부풀어 오릅니다.',
+      '15~20분 뒤 <b>220/200으로 낮춰</b> 남은 시간을 구우세요.',
+      '칼집은 넣기 직전에, 꺼낸 뒤 <b>1시간 이상</b> 식혀야 속이 마무리됩니다.'
+    ]},
+  { id:'cia', name:'치아바타', w:'120g', up:230, low:210, t:15, steam:'강하게',
+    done:'윗면 밝은 갈색 · 눌러 자국 남음',
+    tips:[
+      '<b>스팀이 핵심</b> — 넣기 전 반죽에 물을 뿌리고 오븐에도 스팀을 넣으세요.',
+      '손가락으로 눌러 <b>자국이 천천히 돌아오면</b> 발효 완료.',
+      '너무 오래 구우면 딱딱해지니 <b>13분부터</b> 색을 확인하세요.'
+    ]},
+  { id:'bag', name:'바게트', w:'300g', up:240, low:215, t:23, steam:'강하게 (3회)',
+    done:'짙은 갈색 · 두드리면 맑은 소리',
+    tips:[
+      '칼집은 <b>3~5개</b>, 30° 눕혀 넣어 균일하게 벌어지게 하세요.',
+      '스팀은 <b>넣을 때·5분·10분</b> 세 번 — 껍질이 얇고 바삭해집니다.',
+      '15분 뒤 <b>팬을 180°</b> 돌려 끝까지 색을 맞추세요.'
+    ]},
+  { id:'dan', name:'단과자빵', w:'70g', up:200, low:180, t:13, steam:'없음',
+    done:'윗면 광택 · 옆면 연한 노랑',
+    tips:[
+      '달걀물은 <b>굽기 전·7분 뒤 두 번</b> 발라 광택을 살리세요.',
+      '윗색이 빨리 오르면 <b>호일</b>을 덮고, 바닥이 약하면 아래 칸으로.',
+      '짜는 양이 많으면 팬 간격을 띄워 <b>붙지 않게</b> 하세요.'
+    ]},
+  { id:'fin', name:'휘낭시에·마들렌', w:'', up:200, low:180, t:12, steam:'없음',
+    done:'가장자리 진한 갈색 · 배꼽 볼록',
+    tips:[
+      '팬에 버터를 <b>코팅하고 냉장</b>해 두면 가장자리가 잘 부풀어요.',
+      '반죽은 <b>냉장 1시간 이상</b> 휴지 — 온도차가 배꼽을 만듭니다.',
+      '문을 열지 말고 <b>10~12분</b> 안에 마무리, 갓 구운 뒤 바로 틀에서 빼세요.'
+    ]},
+  { id:'scone', name:'스콘', w:'', up:200, low:180, t:16, steam:'없음',
+    done:'옆면 층이 보이고 윗면 금빛',
+    tips:[
+      '버터는 <b>차갑게</b>, 반죽은 최소한만 치대 <b>결을 살리세요</b>.',
+      '두께 <b>2cm</b>로 밀고, 자를 때는 위아래로 눌러 자르기(비비지 않기).',
+      '윗면에 <b>우유나 달걀물</b>을 바르면 색이 곱게 납니다.'
+    ]}
+];
+
+let curItem = 'salt';
+let iOven = 'deck';
+
+function renderItems(){
+  const g = $('item-grid'); g.innerHTML = '';
+  ITEMS.forEach(function(it){
+    const b = document.createElement('button');
+    b.setAttribute('data-item', it.id);
+    b.innerHTML = it.name + (it.w ? '<small>' + it.w + '</small>' : '<small>개당 1개</small>');
+    b.onclick = function(){ setItem(it.id); };
+    g.appendChild(b);
+  });
+}
+function setItem(id){
+  curItem = id;
+  Array.prototype.forEach.call($('item-grid').children, function(b){
+    b.classList.toggle('on', b.getAttribute('data-item') === id);
+  });
+  calcItem();
+}
+function setIOven(k, idx){
+  iOven = k; pick('ioven-seg', idx); calcItem();
+}
+function findItem(id){
+  for(let i=0;i<ITEMS.length;i++){ if(ITEMS[i].id === id) return ITEMS[i]; }
+  return ITEMS[0];
+}
+function calcItem(){
+  const it = findItem(curItem);
+  const avg = (it.up + it.low) / 2;
+  const nameTxt = it.name + (it.w ? ' ' + it.w : '');
+  $('item-name').textContent = nameTxt;
+  $('item-oven-hint').textContent = OVENS[iOven].name;
+
+  let tTemp, tTime, tempTxt, tempSub, label;
+  if(iOven === 'deck'){
+    tTemp = it.up;
+    tTime = it.t;
+    tempTxt = '상 ' + it.up + ' / 하 ' + it.low;
+    tempSub = '상불·하불 따로 세팅';
+    label = '추천 온도 (데크)';
+  } else if(iOven === 'conv'){
+    tTemp = convTemp(avg, 'deck', 'conv');
+    tTime = convTime(it.t, 'deck', 'conv');
+    tempTxt = tTemp + '°C';
+    tempSub = '데크 ' + Math.round(avg) + '°C 대비 ' + sign(tTemp - Math.round(avg)) + '°C';
+    label = '추천 온도 (컨벡션)';
+  } else {
+    tTemp = convTemp(avg, 'deck', 'home');
+    tTime = convTime(it.t, 'deck', 'home');
+    tempTxt = tTemp + '°C';
+    tempSub = '데크 ' + Math.round(avg) + '°C 대비 ' + sign(tTemp - Math.round(avg)) + '°C';
+    label = '추천 온도 (가정용)';
+  }
+
+  $('item-temp-label').textContent = label;
+  $('item-temp').textContent = tempTxt;
+  $('item-temp-s').textContent = tempSub;
+  $('item-time').textContent = tTime;
+  $('item-time-s').textContent = (iOven === 'deck' ? '중간 확인' : '데크 ' + it.t + '분 기준');
+  $('item-steam').textContent = it.steam;
+  $('item-doneness').textContent = it.done;
+
+  /* 팁 */
+  const ul = $('item-tips'); ul.innerHTML = '';
+  const list = it.tips.slice();
+  if(iOven === 'conv'){
+    list.push('🌀 컨벡션은 <b>팬을 중앙보다 한 칸 아래</b>에, 8~10분에 180° 돌리세요.');
+  } else if(iOven === 'home'){
+    list.push('🏠 가정용은 <b>15분 이상 예열</b>하고 문은 적게 여세요.' +
+      (it.id === 'sour' ? ' 무쇠냄비(더치오븐)에 넣고 뚜껑 20분 → 뚜껑 열고 20분이 가장 안정적입니다.' : ''));
+  }
+  list.forEach(function(txt){
+    const li = document.createElement('li'); li.innerHTML = txt; ul.appendChild(li);
+  });
+  $('item-tips-hint').textContent = OVENS[iOven].name + ' 기준';
+}
+
+function copyItem(){
+  const it = findItem(curItem);
+  const avg = (it.up + it.low) / 2;
+  let tTemp, tTime, tempLine;
+  if(iOven === 'deck'){
+    tTemp = it.up; tTime = it.t;
+    tempLine = '상불 ' + it.up + '°C / 하불 ' + it.low + '°C';
+  } else if(iOven === 'conv'){
+    tTemp = convTemp(avg, 'deck', 'conv'); tTime = convTime(it.t, 'deck', 'conv');
+    tempLine = tTemp + '°C (열풍)';
+  } else {
+    tTemp = convTemp(avg, 'deck', 'home'); tTime = convTime(it.t, 'deck', 'home');
+    tempLine = tTemp + '°C';
+  }
+  let txt = '[바른밀 품목별 굽기 · ' + it.name + (it.w ? ' ' + it.w : '') + ']\n';
+  txt += '• 내 오븐: ' + OVENS[iOven].name + '\n';
+  txt += '• 온도: ' + tempLine + '\n';
+  txt += '• 시간: ' + tTime + '분\n';
+  txt += '• 스팀: ' + it.steam + '\n';
+  txt += '• 익힘 포인트: ' + it.done + '\n';
+  txt += '• 팁: ' + it.tips[0].replace(/<\/?b>/g,'').replace(/<[^>]+>/g,'') + '\n';
+  txt += '※ 오븐마다 열량·단열 차이가 크니 종료 2~3분 전 색을 보고 미세 조정하세요.';
+  copyText(txt, it.name + ' 굽기 기준이 복사되었습니다!');
+}
+
+/* ---------- 초기화 ---------- */
+(function init(){
+  renderPresets();
+  renderItems();
+  /* 내 오븐 그리드에 식별자 부여 */
+  const g = $('tgt-grid');
+  const keys = ['conv','deck','home','air'];
+  Array.prototype.forEach.call(g.children, function(b, i){ b.setAttribute('data-ov', keys[i]); });
+  setItem('salt');
+  calcConv();
+  calcItem();
+})();
+</script>
+</body>
+</html>
