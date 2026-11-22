@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제빵 실전 도구 4종 | 바른밀제빵소</title>
+<meta name="description" content="틀 사이즈 배율 변환, 반죽 분할·발효 손실률, 르방 피딩, 물온도(DDT)·얼음 환산 — 제빵 현장에서 바로 쓰는 계산기 4종입니다.">
+<meta property="og:title" content="바른밀 제빵 실전 도구 4종 🧁">
+<meta property="og:description" content="틀 배율 · 분할 손실 · 르방 피딩 · 물온도·얼음 — 제빵사 손 계산을 대신하는 4가지">
+<meta property="og:type" content="website">
+<style>
+  :root{
+    --bg:#F8F5F0; --card:#FFFFFF; --primary:#965B28; --primary-light:#EFE6DC; --primary-dark:#643914;
+    --text:#241D17; --sub:#665B52; --muted:#9E948C; --border:#E8DFD5;
+    --amber:#FFF9ED; --amber-b:#F3E0B5; --amber-t:#7A5E2E;
+    --font:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font);-webkit-tap-highlight-color:transparent}
+  body{background:var(--bg);color:var(--text);line-height:1.45;font-size:14px;padding:10px 12px 20px;max-width:560px;margin:0 auto}
+
+  header{text-align:center;margin-bottom:8px}
+  .badge{display:inline-block;background:var(--primary-light);color:var(--primary-dark);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:4px}
+  h1{font-size:19px;font-weight:800;letter-spacing:-.6px;color:var(--primary-dark)}
+  .hdesc{font-size:11.5px;color:var(--sub);margin-top:2px}
+
+  .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:8px}
+  .tab{background:#fff;border:1px solid var(--border);border-radius:11px;padding:6px 2px 5px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;color:var(--sub);transition:background .15s,color .15s,border-color .15s}
+  .tab .em{font-size:15px;line-height:1.2}
+  .tab .nm{font-size:10.5px;font-weight:800;letter-spacing:-.3px;white-space:nowrap}
+  .tab.on{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:10px 11px;box-shadow:0 2px 6px rgba(40,25,10,.04);margin-bottom:7px}
+  .lab{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--primary-dark);margin-bottom:7px}
+  .lab .hint{font-size:10.5px;font-weight:600;color:var(--muted);white-space:nowrap}
+
+  .seg{display:flex;background:#EFEBE5;border-radius:10px;padding:3px;gap:3px}
+  .seg button{flex:1;border:0;background:transparent;border-radius:8px;padding:7px 3px;font-size:12.5px;font-weight:700;color:var(--sub);font-family:inherit;cursor:pointer;line-height:1.25;transition:background .15s,color .15s}
+  .seg button.on{background:#fff;color:var(--primary-dark);box-shadow:0 1px 3px rgba(40,25,10,.12)}
+  .seg button small{display:block;font-size:9.5px;font-weight:600;color:var(--muted);margin-top:1px}
+  .seg button.on small{color:var(--primary)}
+
+  .irow{display:flex;align-items:center;gap:8px;background:#FCFAF7;border:1px solid var(--border);border-radius:10px;padding:4px 11px;margin-top:6px}
+  .irow input{flex:1;min-width:0;width:100%;border:0;background:transparent;font-size:22px;font-weight:800;color:var(--text);font-family:inherit;outline:none;text-align:right;padding:0;line-height:1.3}
+  .irow .unit{flex:0 0 auto;font-size:12px;font-weight:700;color:var(--muted)}
+  .irow.compact{padding:3px 9px;margin-top:0}
+  .irow.compact input{font-size:19px}
+  .irow.compact .unit{font-size:11px}
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+  .duo{display:flex;gap:8px}
+  .duo>div{flex:1;min-width:0}
+  .three{display:flex;gap:5px}
+  .three>div{flex:1;min-width:0}
+  .tlab{font-size:10px;font-weight:700;color:var(--muted);margin:7px 0 3px 2px;letter-spacing:-.1px}
+
+  .presets{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;align-items:center}
+  .presets .pl{font-size:10.5px;font-weight:700;color:var(--muted);margin-right:1px}
+  .presets button{border:1px solid var(--border);background:#fff;border-radius:14px;padding:4px 11px;font-size:12px;font-weight:700;color:var(--primary-dark);font-family:inherit;cursor:pointer}
+  .presets button:active{background:var(--primary-light)}
+  .presets button.on{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff}
+
+  .res{display:flex;gap:7px;margin-bottom:7px}
+  .rbox{flex:1;min-width:0;background:#fff;border:1px solid var(--border);border-radius:11px;padding:8px 10px}
+  .rbox.hot{background:var(--primary-light);border-color:#E0CDB8}
+  .rl{font-size:11px;font-weight:700;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rbox.hot .rl{color:var(--primary-dark)}
+  .rv{font-size:23px;font-weight:900;color:var(--primary-dark);letter-spacing:-.8px;line-height:1.15;margin-top:1px;white-space:nowrap}
+  .rv small{font-size:11.5px;font-weight:700;color:var(--sub);margin-left:2px;letter-spacing:0}
+  .rv.bigv{font-size:33px}
+  .rv.bigv small{font-size:13px}
+  .rs{font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .res.trio .rv{font-size:20px}
+
+  .note{font-size:11px;color:var(--sub);background:#F7F3EC;border-radius:8px;padding:7px 9px;margin-bottom:6px;line-height:1.48}
+  .note b{color:var(--primary-dark)}
+  .tip{font-size:10.8px;color:var(--amber-t);background:var(--amber);border:1px solid var(--amber-b);border-radius:8px;padding:7px 9px;margin-bottom:7px;line-height:1.5}
+  .tip b{font-weight:800}
+
+  .copy{display:block;width:100%;border:0;background:var(--primary-dark);color:#fff;border-radius:11px;padding:11px;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer}
+  .copy:active{opacity:.88}
+
+  .pane{display:none}
+  .pane.on{display:block}
+
+  .rbtn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+  .rbtn{border:1px solid var(--border);background:#fff;border-radius:10px;padding:8px 4px;font-size:13px;font-weight:800;color:var(--sub);font-family:inherit;cursor:pointer;line-height:1.2;letter-spacing:-.3px}
+  .rbtn small{display:block;font-size:9.5px;font-weight:600;color:var(--muted);margin-top:2px;letter-spacing:0}
+  .rbtn.on{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff}
+  .rbtn.on small{color:#E7D6BF}
+
+  .prof .ptop{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-bottom:6px}
+  .prof .ptag{font-size:10.5px;font-weight:800;color:#fff;background:var(--primary);border-radius:20px;padding:3px 9px}
+  .prof .pacid{font-size:10.5px;font-weight:800;color:var(--primary-dark);background:var(--primary-light);border-radius:20px;padding:3px 9px;letter-spacing:.5px}
+  .prof .pflav{font-size:11.5px;color:var(--sub);line-height:1.55}
+  .prof .pflav b,.prof .puse b{color:var(--primary-dark);font-size:10.5px;letter-spacing:.3px;margin-right:3px}
+  .prof .puse{font-size:11px;color:var(--amber-t);background:var(--amber);border:1px solid var(--amber-b);border-radius:8px;padding:6px 8px;margin-top:6px;line-height:1.5}
+  .prof .puse b{color:var(--amber-t)}
+
+  .peakbox{display:flex;flex-direction:column;gap:6px;margin-top:8px;background:#FCFAF7;border:1px solid var(--border);border-radius:10px;padding:9px 11px}
+  .peakbox .pk1{font-size:12px;color:var(--sub);font-weight:700}
+  .peakbox .pk1 b{color:var(--primary-dark);font-size:15px;font-weight:900;letter-spacing:-.3px}
+  .peakbox .pk2{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .peakbox .pk2 b{color:var(--primary-dark);font-weight:800}
+  .peakbox input[type=time]{border:1px solid var(--border);border-radius:8px;padding:4px 7px;font-size:16px;font-family:inherit;font-weight:700;color:var(--primary-dark);background:#fff;outline:none}
+
+  .tbl{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:9px;table-layout:fixed}
+  .tbl th{font-size:10px;color:var(--muted);font-weight:700;padding:4px 2px;border-bottom:1px solid var(--border);text-align:center}
+  .tbl th:first-child{text-align:left;padding-left:4px}
+  .tbl td{padding:6px 2px;text-align:center;border-bottom:1px dashed #F0E6DA;color:var(--sub);font-weight:600;white-space:nowrap}
+  .tbl td:first-child{text-align:left;font-weight:800;color:var(--text);padding-left:4px}
+  .tbl tr:last-child td{border-bottom:0}
+  .tbl tr.on td{background:var(--primary-light);color:var(--primary-dark)}
+  .tbl tr.on td:first-child{color:var(--primary-dark)}
+
+  details.fx{background:#F7F3EC;border-radius:9px;padding:9px 11px;margin-bottom:8px;font-size:11.5px;color:var(--sub);line-height:1.6}
+  details.fx summary{font-weight:800;color:var(--primary-dark);font-size:12px;cursor:pointer;outline:none}
+  details.fx p{margin-top:6px}
+  details.fx b{color:var(--primary-dark)}
+  .eq{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;background:#fff;border:1px solid var(--border);border-radius:7px;padding:6px 8px;margin-top:6px;color:var(--text);overflow-x:auto;white-space:nowrap;letter-spacing:-.2px}
+
+  .foot{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+  .foot a{font-size:11.5px;font-weight:700;color:var(--primary-dark);background:#fff;border:1px solid var(--border);border-radius:14px;padding:6px 12px;text-decoration:none}
+  .foot a:active{background:var(--primary-light)}
+
+  #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(90px);background:rgba(36,29,23,.93);color:#fff;padding:10px 18px;border-radius:20px;font-size:12.5px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:99;transition:transform .25s cubic-bezier(.175,.885,.32,1.275);pointer-events:none;white-space:nowrap;max-width:92vw}
+  #toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">🥐 바른밀제빵소 실전 도구</div>
+  <h1>제빵 실전 도구 4종</h1>
+  <div class="hdesc">틀 배율 · 분할 손실 · 르방 피딩 · 물온도·얼음</div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <div class="tab on" id="tab-pan" onclick="setTab('pan')"><span class="em">🧁</span><span class="nm">틀 배율</span></div>
+  <div class="tab" id="tab-split" onclick="setTab('split')"><span class="em">⚖️</span><span class="nm">분할·손실</span></div>
+  <div class="tab" id="tab-levain" onclick="setTab('levain')"><span class="em">🦠</span><span class="nm">르방 피딩</span></div>
+  <div class="tab" id="tab-ddt" onclick="setTab('ddt')"><span class="em">🧊</span><span class="nm">물온도·얼음</span></div>
+</nav>
+
+<!-- ============ 1. 틀 사이즈 배율 변환기 ============ -->
+<section class="pane on" id="pane-pan">
+  <div class="card">
+    <div class="lab"><span>① 원본 틀 — 레시피의 틀</span><span class="hint" id="src-cap">원형 15 × 7cm</span></div>
+    <div class="seg" id="src-shape-seg">
+      <button class="on" onclick="setPanShape('src','round',0)">원형</button>
+      <button onclick="setPanShape('src','rect',1)">사각 · 식빵틀</button>
+    </div>
+    <div id="src-round">
+      <div class="presets" id="src-round-presets"></div>
+      <div class="duo">
+        <div><div class="tlab">지름</div><div class="irow compact"><input id="src-d" type="number" inputmode="decimal" value="15" oninput="calcPan()"><span class="unit">cm</span></div></div>
+        <div><div class="tlab">높이</div><div class="irow compact"><input id="src-h" type="number" inputmode="decimal" value="7" oninput="calcPan()"><span class="unit">cm</span></div></div>
+      </div>
+    </div>
+    <div id="src-rect" style="display:none">
+      <div class="presets" id="src-rect-presets"></div>
+      <div class="three">
+        <div><div class="tlab">가로</div><div class="irow compact"><input id="src-w" type="number" inputmode="decimal" value="15.3" oninput="calcPan()"><span class="unit">cm</span></div></div>
+        <div><div class="tlab">세로</div><div class="irow compact"><input id="src-l" type="number" inputmode="decimal" value="7.3" oninput="calcPan()"><span class="unit">cm</span></div></div>
+        <div><div class="tlab">높이</div><div class="irow compact"><input id="src-h2" type="number" inputmode="decimal" value="6.5" oninput="calcPan()"><span class="unit">cm</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>② 내 틀</span><span class="hint" id="dst-cap">원형 18 × 7cm</span></div>
+    <div class="seg" id="dst-shape-seg">
+      <button class="on" onclick="setPanShape('dst','round',0)">원형</button>
+      <button onclick="setPanShape('dst','rect',1)">사각 · 식빵틀</button>
+    </div>
+    <div id="dst-round">
+      <div class="presets" id="dst-round-presets"></div>
+      <div class="duo">
+        <div><div class="tlab">지름</div><div class="irow compact"><input id="dst-d" type="number" inputmode="decimal" value="18" oninput="calcPan()"><span class="unit">cm</span></div></div>
+        <div><div class="tlab">높이</div><div class="irow compact"><input id="dst-h" type="number" inputmode="decimal" value="7" oninput="calcPan()"><span class="unit">cm</span></div></div>
+      </div>
+    </div>
+    <div id="dst-rect" style="display:none">
+      <div class="presets" id="dst-rect-presets"></div>
+      <div class="three">
+        <div><div class="tlab">가로</div><div class="irow compact"><input id="dst-w" type="number" inputmode="decimal" value="21.5" oninput="calcPan()"><span class="unit">cm</span></div></div>
+        <div><div class="tlab">세로</div><div class="irow compact"><input id="dst-l" type="number" inputmode="decimal" value="9.5" oninput="calcPan()"><span class="unit">cm</span></div></div>
+        <div><div class="tlab">높이</div><div class="irow compact"><input id="dst-h2" type="number" inputmode="decimal" value="9.5" oninput="calcPan()"><span class="unit">cm</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="res">
+    <div class="rbox hot">
+      <div class="rl">내 틀 ÷ 원본 틀 배율</div>
+      <div class="rv bigv"><span id="pan-ratio">1.44</span><small>배</small></div>
+      <div class="rs" id="pan-vol">부피 1,237 → 1,781 cm³</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>③ 기본 재료 변환</span><span class="hint">밀가루 등</span></div>
+    <div class="irow"><input id="pan-flour" type="number" inputmode="decimal" value="300" oninput="calcPan()"><span class="unit">g</span></div>
+    <div class="presets" id="pan-flour-presets"></div>
+  </div>
+
+  <div class="res">
+    <div class="rbox hot">
+      <div class="rl">변환된 밀가루</div>
+      <div class="rv"><span id="pan-flour-out">432</span><small>g</small></div>
+      <div class="rs" id="pan-flour-sub">300g × 1.44</div>
+    </div>
+  </div>
+
+  <div class="note" id="pan-note"></div>
+  <div class="tip">💡 <b>물·소금·버터·설탕</b>은 배율 그대로 곱하면 됩니다. 반죽량이 크게 늘 때는 <b>이스트만 10~20% 덜</b> 넣고 발효 상태를 보며 맞추세요. 틀 치수는 <b>윗면 안쪽(내경)</b> 기준으로 재면 가장 정확합니다.</div>
+  <button class="copy" onclick="copyPan()">📋 결과 복사하기</button>
+</section>
+
+<!-- ============ 2. 반죽 분할 & 발효 손실률 ============ -->
+<section class="pane" id="pane-split">
+  <div class="card" style="padding:9px 9px">
+    <div class="seg" id="split-mode-seg">
+      <button class="on" onclick="setSplitMode('fwd',0)">목표 개수 → 총 반죽</button>
+      <button onclick="setSplitMode('back',1)">총 반죽 → 개당</button>
+    </div>
+  </div>
+
+  <div id="split-fwd">
+    <div class="card">
+      <div class="lab"><span>개당 무게 × 목표 개수</span><span class="hint">손실 포함</span></div>
+      <div class="duo">
+        <div><div class="tlab">개당 무게</div><div class="irow compact"><input id="sp-per" type="number" inputmode="decimal" value="80" oninput="calcSplit()"><span class="unit">g</span></div></div>
+        <div><div class="tlab">목표 개수</div><div class="irow compact"><input id="sp-cnt" type="number" inputmode="decimal" value="12" oninput="calcSplit()"><span class="unit">개</span></div></div>
+      </div>
+      <div class="presets" id="sp-per-presets"></div>
+    </div>
+    <div class="card">
+      <div class="lab"><span>분할 · 발효 손실률</span><span class="hint">기본 3%</span></div>
+      <div class="irow"><input id="sp-loss" type="number" inputmode="decimal" value="3" step="0.5" oninput="calcSplit()"><span class="unit">%</span></div>
+      <div class="presets" id="sp-loss-presets"></div>
+    </div>
+    <div class="res">
+      <div class="rbox hot">
+        <div class="rl">쳐야 할 총 반죽 무게</div>
+        <div class="rv"><span id="sp-total">989.7</span><small>g</small></div>
+        <div class="rs" id="sp-sub">개당 80g × 12개 ÷ 0.97</div>
+      </div>
+    </div>
+    <div class="res">
+      <div class="rbox"><div class="rl">완제품 합계</div><div class="rv"><span id="sp-final">960</span><small>g</small></div><div class="rs" id="sp-final-sub">80g × 12개</div></div>
+      <div class="rbox"><div class="rl">분할·발효 손실</div><div class="rv"><span id="sp-lost">29.7</span><small>g</small></div><div class="rs" id="sp-lost-sub">총량의 3%</div></div>
+    </div>
+    <div class="note" id="sp-note"></div>
+  </div>
+
+  <div id="split-back" style="display:none">
+    <div class="card">
+      <div class="lab"><span>총 반죽 무게 ÷ 목표 개수</span><span class="hint">역산</span></div>
+      <div class="duo">
+        <div><div class="tlab">총 반죽 무게</div><div class="irow compact"><input id="spb-total" type="number" inputmode="decimal" value="1000" oninput="calcSplit()"><span class="unit">g</span></div></div>
+        <div><div class="tlab">목표 개수</div><div class="irow compact"><input id="spb-cnt" type="number" inputmode="decimal" value="12" oninput="calcSplit()"><span class="unit">개</span></div></div>
+      </div>
+      <div class="presets" id="spb-total-presets"></div>
+    </div>
+    <div class="card">
+      <div class="lab"><span>분할 · 발효 손실률</span><span class="hint">기본 3%</span></div>
+      <div class="irow"><input id="spb-loss" type="number" inputmode="decimal" value="3" step="0.5" oninput="calcSplit()"><span class="unit">%</span></div>
+      <div class="presets" id="spb-loss-presets"></div>
+    </div>
+    <div class="res">
+      <div class="rbox hot">
+        <div class="rl">개당 분할 무게</div>
+        <div class="rv"><span id="spb-per">80.8</span><small>g</small></div>
+        <div class="rs" id="spb-sub">1,000g × 0.97 ÷ 12개</div>
+      </div>
+    </div>
+    <div class="res">
+      <div class="rbox"><div class="rl">완제품 합계</div><div class="rv"><span id="spb-final">970</span><small>g</small></div><div class="rs" id="spb-final-sub">총량의 97%</div></div>
+      <div class="rbox"><div class="rl">버려지는 반죽</div><div class="rv"><span id="spb-lost">30</span><small>g</small></div><div class="rs" id="spb-lost-sub">총량의 3%</div></div>
+    </div>
+    <div class="note" id="spb-note"></div>
+  </div>
+
+  <div class="tip">💡 손실률은 <b>반죽 총량 중 버려지는 비율</b>입니다(볼·스크레이퍼에 붙는 반죽, 분할 손실, 발효 중 들러붙음). 개당 무게가 정확해야 할 때는 <b>1g 단위로 반올림</b>하고 마지막 1개로 오차를 맞추세요.</div>
+  <button class="copy" onclick="copySplit()">📋 결과 복사하기</button>
+</section>
+
+<!-- ============ 3. 르방 피딩 계산기 ============ -->
+<section class="pane" id="pane-levain">
+  <div class="card">
+    <div class="lab"><span>원하는 르방 총량</span><span class="hint">종균+밀가루+물</span></div>
+    <div class="irow"><input id="lv-total" type="number" inputmode="decimal" value="300" oninput="calcLevain()"><span class="unit">g</span></div>
+    <div class="presets" id="lv-total-presets"></div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>피딩 비율 (종균 : 밀가루 : 물)</span><span class="hint">수분 100%</span></div>
+    <div class="rbtn-grid" id="lv-ratios"></div>
+  </div>
+
+  <div class="res trio">
+    <div class="rbox hot"><div class="rl">종균(스타터)</div><div class="rv"><span id="lv-starter">27.3</span><small>g</small></div><div class="rs">기존 르방에서</div></div>
+    <div class="rbox"><div class="rl">밀가루</div><div class="rv"><span id="lv-flour">136.4</span><small>g</small></div><div class="rs">새로 넣을 양</div></div>
+    <div class="rbox"><div class="rl">물</div><div class="rv"><span id="lv-water">136.4</span><small>g</small></div><div class="rs" id="lv-water-sub">25°C 전후</div></div>
+  </div>
+
+  <div class="card">
+    <div class="prof" id="lv-prof"></div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>실내 온도 · 예상 피크</span><span class="hint" id="lv-temp-hint">25°C 기준</span></div>
+    <div class="seg" id="lv-temp-seg">
+      <button onclick="setLvTemp(22,0)">22°C<small>선선</small></button>
+      <button class="on" onclick="setLvTemp(25,1)">25°C<small>보통</small></button>
+      <button onclick="setLvTemp(28,2)">28°C<small>더움</small></button>
+    </div>
+    <div class="peakbox">
+      <div class="pk1">예상 피크 <b id="lv-peak">약 8~10시간</b></div>
+      <div class="pk2"><input id="lv-start" type="time" value="20:00" oninput="calcLevain()"> 피딩 → <b id="lv-peak-at">내일 05:00경</b></div>
+    </div>
+    <table class="tbl" id="lv-tbl"></table>
+  </div>
+
+  <div class="tip">💡 르방이 <b>2배로 부풀어 돔이 정점</b>일 때가 피크입니다. 손가락으로 눌러 천천히 돌아오면 사용 적기, 겉면이 꺼지고 시큼한 냄새가 나면 과발효예요. 종균 컨디션·수분·밀가루에 따라 위 시간은 ±30% 달라집니다.</div>
+  <button class="copy" onclick="copyLevain()">📋 결과 복사하기</button>
+</section>
+
+<!-- ============ 4. 물온도(DDT) + 얼음 환산 ============ -->
+<section class="pane" id="pane-ddt">
+  <div class="card" style="padding:9px 9px">
+    <div class="seg" id="ddt-mode-seg">
+      <button class="on" onclick="setDdtMode(3,0)">3요소<small>물·실온·밀가루</small></button>
+      <button onclick="setDdtMode(4,1)">4요소 · 르방<small>르방 온도 포함</small></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>반죽 온도 조건</span><span class="hint">°C</span></div>
+    <div class="duo">
+      <div><div class="tlab">희망 반죽온도(DDT)</div><div class="irow compact"><input id="ddt-target" type="number" inputmode="decimal" value="24" step="0.5" oninput="calcDdt()"><span class="unit">°C</span></div></div>
+      <div><div class="tlab">실내 온도</div><div class="irow compact"><input id="ddt-room" type="number" inputmode="decimal" value="26" step="0.5" oninput="calcDdt()"><span class="unit">°C</span></div></div>
+    </div>
+    <div class="duo">
+      <div><div class="tlab">밀가루 온도</div><div class="irow compact"><input id="ddt-flour" type="number" inputmode="decimal" value="24" step="0.5" oninput="calcDdt()"><span class="unit">°C</span></div></div>
+      <div><div class="tlab">마찰계수</div><div class="irow compact"><input id="ddt-friction" type="number" inputmode="decimal" value="8" step="0.5" oninput="calcDdt()"><span class="unit">°C</span></div></div>
+    </div>
+    <div class="duo" id="ddt-levain-row" style="display:none">
+      <div><div class="tlab">르방 온도</div><div class="irow compact"><input id="ddt-lev" type="number" inputmode="decimal" value="24" step="0.5" oninput="calcDdt()"><span class="unit">°C</span></div></div>
+      <div></div>
+    </div>
+    <div class="presets" id="ddt-friction-presets"></div>
+  </div>
+
+  <div class="res">
+    <div class="rbox hot">
+      <div class="rl">필요 물온도</div>
+      <div class="rv"><span id="ddt-out">14.0</span><small>°C</small></div>
+      <div class="rs" id="ddt-status">얼음물 필요</div>
+    </div>
+  </div>
+  <div class="note" id="ddt-formula"></div>
+
+  <div class="card">
+    <div class="lab"><span>🧊 얼음 환산</span><span class="hint">물 전체 기준</span></div>
+    <div class="duo">
+      <div><div class="tlab">총 물 무게</div><div class="irow compact"><input id="ice-water" type="number" inputmode="decimal" value="700" oninput="calcDdt()"><span class="unit">g</span></div></div>
+      <div><div class="tlab">수돗물 온도</div><div class="irow compact"><input id="ice-tap" type="number" inputmode="decimal" value="20" step="0.5" oninput="calcDdt()"><span class="unit">°C</span></div></div>
+    </div>
+    <div class="presets" id="ice-kind-presets"></div>
+    <div class="res" style="margin:8px 0 0">
+      <div class="rbox hot"><div class="rl">얼음</div><div class="rv"><span id="ice-out">45</span><small>g</small></div><div class="rs" id="ice-out-sub">전체의 6%</div></div>
+      <div class="rbox"><div class="rl">상온 물</div><div class="rv"><span id="water-out">655</span><small>g</small></div><div class="rs" id="water-out-sub">수돗물 20°C</div></div>
+    </div>
+  </div>
+
+  <details class="fx">
+    <summary>공식 자세히 보기 (왜 이 숫자가 나오는지)</summary>
+    <p><b>1) 필요 물온도</b><br>3요소 — 반죽에 영향을 주는 온도가 물·실내·밀가루 셋이라 셋을 더해 3으로 나눈 값이 반죽온도가 됩니다. 마찰열은 반죽기 돌릴 때 더해지는 열이라 목표에서 빼줍니다.</p>
+    <div class="eq">물온도 = (DDT × 3) − (실내 + 밀가루 + 마찰계수)</div>
+    <p>4요소 — 르방(스타터)을 넣으면 르방 온도까지 포함해 4로 나눕니다.</p>
+    <div class="eq">물온도 = (DDT × 4) − (실내 + 밀가루 + 르방 + 마찰계수)</div>
+    <p><b>2) 얼음 환산</b><br>얼음은 녹을 때 융해열 <b>80kcal/kg(80cal/g)</b>을 흡수합니다. 물 전체 Wg 중 얼음 xg을 넣고 최종 수온 T가 되면, 상온 물이 잃는 열과 얼음이 얻는 열이 같습니다.</p>
+    <div class="eq">(W − x)(수돗물 − T) = x(80 + T)  →  x = W × (수돗물 − T) ÷ (수돗물 + 80)</div>
+    <p>냉동고 얼음(-18°C)은 0°C까지 데우는 열량(얼음 비열 약 0.5cal/g·°C × 18 = 9cal/g)이 더해져 분모가 <b>수돗물 + 89</b>가 됩니다.</p>
+    <p>얼음은 <b>완전히 녹인 뒤</b> 반죽에 넣으세요. 얼음이 남아 있으면 그만큼의 물이 계량에서 빠져 반죽이 되직해집니다.</p>
+  </details>
+
+  <button class="copy" onclick="copyDdt()">📋 결과 복사하기</button>
+</section>
+
+<div class="foot">
+  <a href="../">🏠 바른밀 링크</a>
+  <a href="../convert/">🥛 재료 환산기</a>
+  <a href="../calc/">🍞 베이커스 % 계산기</a>
+  <a href="../order/">🥖 오늘의 빵</a>
+</div>
+
+<div id="toast">복사되었습니다!</div>
+
+<script>
+/* ---------- 공통 ---------- */
+function $(id){ return document.getElementById(id); }
+function num(el){
+  if(!el) return 0;
+  const v = String(el.value||'').replace(/,/g,'').trim();
+  const f = parseFloat(v);
+  return isFinite(f) ? f : 0;
+}
+function fmt(x){
+  if(!isFinite(x)) return '0';
+  const r = Math.round(x*10)/10;
+  return r.toLocaleString('ko-KR',{maximumFractionDigits:1});
+}
+function f0(x){
+  if(!isFinite(x)) return '0';
+  return Math.round(x).toLocaleString('ko-KR');
+}
+function pick(segId, idx){
+  const el = $(segId);
+  if(!el) return;
+  Array.prototype.forEach.call(el.children, function(b,i){ b.classList.toggle('on', i===idx); });
+}
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ t.classList.remove('show'); }, 1900);
+}
+function legacyCopy(text, msg){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly','');
+  ta.style.position = 'fixed'; ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select(); ta.setSelectionRange(0, ta.value.length);
+  try{ document.execCommand('copy'); toast(msg||'복사되었습니다!'); }
+  catch(e){ toast('복사 실패 — 길게 눌러 선택해 주세요'); }
+  document.body.removeChild(ta);
+}
+function copyText(text, msg){
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(function(){ toast(msg||'복사되었습니다!'); })
+      .catch(function(){ legacyCopy(text,msg); });
+  } else {
+    legacyCopy(text,msg);
+  }
+}
+const TABS = ['pan','split','levain','ddt'];
+function setTab(t){
+  TABS.forEach(function(id){
+    $('tab-'+id).classList.toggle('on', id===t);
+    $('pane-'+id).classList.toggle('on', id===t);
+  });
+  window.scrollTo(0,0);
+}
+
+/* ================= 1. 틀 사이즈 배율 ================= */
+const PAN_ROUND = [{n:'미니 12',d:12},{n:'1호 15',d:15},{n:'2호 18',d:18},{n:'3호 21',d:21}];
+const PAN_RECT = [
+  {n:'미니식빵틀', w:15.3, l:7.3, h:6.5},
+  {n:'옥수수식빵틀', w:21.5, l:9.5, h:9.5},
+  {n:'우유식빵틀', w:30, l:9.5, h:9.5},
+  {n:'파운드틀', w:21, l:8.5, h:6}
+];
+const panShape = {src:'round', dst:'round'};
+
+function renderPanPresets(){
+  [['src','src-round-presets','src-rect-presets'],['dst','dst-round-presets','dst-rect-presets']].forEach(function(row){
+    const which = row[0], rb = $(row[1]), xb = $(row[2]);
+    rb.innerHTML = ''; xb.innerHTML = '';
+    const pl1 = document.createElement('span'); pl1.className='pl'; pl1.textContent='호수'; rb.appendChild(pl1);
+    PAN_ROUND.forEach(function(p){
+      const b = document.createElement('button'); b.type='button'; b.textContent = p.n;
+      b.onclick = function(){
+        $(which+'-d').value = p.d;
+        if(panShape[which] !== 'round') setPanShape(which,'round',0);
+        calcPan();
+      };
+      rb.appendChild(b);
+    });
+    const pl2 = document.createElement('span'); pl2.className='pl'; pl2.textContent='식빵틀'; xb.appendChild(pl2);
+    PAN_RECT.forEach(function(p){
+      const b = document.createElement('button'); b.type='button'; b.textContent = p.n;
+      b.onclick = function(){
+        $(which+'-w').value = p.w; $(which+'-l').value = p.l; $(which+'-h2').value = p.h;
+        if(panShape[which] !== 'rect') setPanShape(which,'rect',1);
+        calcPan();
+      };
+      xb.appendChild(b);
+    });
+  });
+  const fb = $('pan-flour-presets'); fb.innerHTML='';
+  const pl3 = document.createElement('span'); pl3.className='pl'; pl3.textContent='빠른 입력'; fb.appendChild(pl3);
+  [300,500,1000].forEach(function(v){
+    const b = document.createElement('button'); b.type='button'; b.textContent = v+'g';
+    b.onclick = function(){ $('pan-flour').value = v; calcPan(); };
+    fb.appendChild(b);
+  });
+}
+
+function setPanShape(which, shape, idx){
+  panShape[which] = shape;
+  pick(which+'-shape-seg', idx);
+  $(which+'-round').style.display = shape==='round' ? 'block' : 'none';
+  $(which+'-rect').style.display  = shape==='rect'  ? 'block' : 'none';
+  calcPan();
+}
+
+function panVol(which){
+  if(panShape[which] === 'round'){
+    const d = num($(which+'-d')), h = num($(which+'-h'));
+    return Math.PI/4 * d * d * h;
+  }
+  const w = num($(which+'-w')), l = num($(which+'-l')), h = num($(which+'-h2'));
+  return w * l * h;
+}
+function panDesc(which){
+  if(panShape[which] === 'round'){
+    return '원형 ' + fmt(num($(which+'-d'))) + ' × ' + fmt(num($(which+'-h'))) + 'cm';
+  }
+  return '사각 ' + fmt(num($(which+'-w'))) + '×' + fmt(num($(which+'-l'))) + '×' + fmt(num($(which+'-h2'))) + 'cm';
+}
+
+function calcPan(){
+  const v1 = panVol('src'), v2 = panVol('dst');
+  const ratio = (v1 > 0 && v2 > 0) ? v2 / v1 : 0;
+  const flour = num($('pan-flour'));
+
+  $('src-cap').textContent = panDesc('src');
+  $('dst-cap').textContent = panDesc('dst');
+  $('pan-ratio').textContent = ratio > 0 ? ratio.toFixed(2) : '—';
+  $('pan-vol').textContent = '부피 ' + f0(v1) + ' → ' + f0(v2) + ' cm³';
+
+  if(ratio > 0){
+    $('pan-flour-out').textContent = fmt(flour * ratio);
+    $('pan-flour-sub').textContent = fmt(flour) + 'g × ' + ratio.toFixed(2);
+    let msg = '';
+    if(Math.abs(ratio - 1) < 0.005){
+      msg = '두 틀의 <b>부피가 같습니다</b> — 레시피 그대로 쓰면 됩니다.';
+    } else if(ratio > 1){
+      msg = '내 틀이 원본보다 <b>' + ratio.toFixed(2) + '배 큽니다</b> — 모든 재료에 같은 배율을 곱하세요. (밀가루 ' + fmt(flour) + 'g → <b>' + fmt(flour*ratio) + 'g</b>)';
+    } else {
+      msg = '내 틀이 원본보다 <b>' + ratio.toFixed(2) + '배 작습니다</b> — 재료를 줄여서 쓰세요. (밀가루 ' + fmt(flour) + 'g → <b>' + fmt(flour*ratio) + 'g</b>)';
+    }
+    $('pan-note').innerHTML = msg + '<br>부피는 원형이면 지름×지름×높이, 사각이면 가로×세로×높이로 계산합니다.';
+  } else {
+    $('pan-flour-out').textContent = '0';
+    $('pan-flour-sub').textContent = '틀 치수를 입력하세요';
+    $('pan-note').innerHTML = '원본 틀과 내 틀의 <b>치수를 입력</b>하면 배율이 계산됩니다.';
+  }
+}
+
+function copyPan(){
+  const r = (panVol('src') > 0 && panVol('dst') > 0) ? panVol('dst')/panVol('src') : 0;
+  const flour = num($('pan-flour'));
+  let t = '[바른밀 틀 배율] ' + panDesc('src') + ' → ' + panDesc('dst') + '\n';
+  t += '• 부피: ' + f0(panVol('src')) + ' → ' + f0(panVol('dst')) + ' cm³\n';
+  t += '• 배율: ×' + r.toFixed(2) + '\n';
+  t += '• 밀가루 ' + fmt(flour) + 'g → ' + fmt(flour*r) + 'g\n';
+  t += '• 모든 재료에 ×' + r.toFixed(2) + ' (이스트는 발효 상태 보며 10~20% 조정)';
+  copyText(t, '틀 배율 결과가 복사되었습니다!');
+}
+
+/* ================= 2. 반죽 분할 & 손실률 ================= */
+let splitMode = 'fwd';
+
+function setSplitMode(m, idx){
+  splitMode = m;
+  pick('split-mode-seg', idx);
+  $('split-fwd').style.display = m==='fwd' ? 'block' : 'none';
+  $('split-back').style.display = m==='back' ? 'block' : 'none';
+  calcSplit();
+}
+
+function renderSplitPresets(){
+  const per = $('sp-per-presets'); per.innerHTML='';
+  const pl1 = document.createElement('span'); pl1.className='pl'; pl1.textContent='개당'; per.appendChild(pl1);
+  [40,60,80,100,150].forEach(function(v){
+    const b = document.createElement('button'); b.type='button'; b.textContent = v+'g';
+    b.onclick = function(){ $('sp-per').value = v; calcSplit(); };
+    per.appendChild(b);
+  });
+  const tot = $('spb-total-presets'); tot.innerHTML='';
+  const pl2 = document.createElement('span'); pl2.className='pl'; pl2.textContent='빠른 입력'; tot.appendChild(pl2);
+  [500,1000,1500,2000].forEach(function(v){
+    const b = document.createElement('button'); b.type='button'; b.textContent = f0(v)+'g';
+    b.onclick = function(){ $('spb-total').value = v; calcSplit(); };
+    tot.appendChild(b);
+  });
+  [['sp-loss-presets','sp-loss'],['spb-loss-presets','spb-loss']].forEach(function(row){
+    const box = $(row[0]); box.innerHTML='';
+    const pl = document.createElement('span'); pl.className='pl'; pl.textContent='손실률'; box.appendChild(pl);
+    [0,3,5,8].forEach(function(v){
+      const b = document.createElement('button'); b.type='button'; b.textContent = v+'%';
+      b.onclick = function(){ $(row[1]).value = v; calcSplit(); };
+      box.appendChild(b);
+    });
+  });
+}
+
+function lossRate(el){
+  let v = num(el);
+  if(!isFinite(v) || v < 0) v = 0;
+  if(v > 50) v = 50;
+  return v/100;
+}
+
+function calcSplit(){
+  if(splitMode === 'fwd'){
+    const per = num($('sp-per')), cnt = num($('sp-cnt')), loss = lossRate($('sp-loss'));
+    const need = (cnt > 0) ? per*cnt/(1-loss) : 0;
+    const final = per*cnt;
+    $('sp-total').textContent = fmt(need);
+    $('sp-sub').textContent = '개당 ' + fmt(per) + 'g × ' + f0(cnt) + '개 ÷ ' + (1-loss).toFixed(2);
+    $('sp-final').textContent = fmt(final);
+    $('sp-final-sub').textContent = fmt(per) + 'g × ' + f0(cnt) + '개';
+    $('sp-lost').textContent = fmt(need - final);
+    $('sp-lost-sub').textContent = '총량의 ' + Math.round(loss*1000)/10 + '%';
+    $('sp-note').innerHTML = '공식 — <b>개당 무게 × 개수 ÷ (1 − 손실률)</b> = ' + fmt(per) + ' × ' + f0(cnt) + ' ÷ ' + (1-loss).toFixed(2) + ' = <b>' + fmt(need) + 'g</b>. 이 반죽을 치면 손실 ' + fmt(need-final) + 'g을 빼고 ' + fmt(final) + 'g이 남습니다.';
+  } else {
+    const total = num($('spb-total')), cnt = num($('spb-cnt')), loss = lossRate($('spb-loss'));
+    const per = (cnt > 0) ? total*(1-loss)/cnt : 0;
+    const final = total*(1-loss);
+    $('spb-per').textContent = fmt(per);
+    $('spb-sub').textContent = f0(total) + 'g × ' + (1-loss).toFixed(2) + ' ÷ ' + f0(cnt) + '개';
+    $('spb-final').textContent = fmt(final);
+    $('spb-final-sub').textContent = '총량의 ' + Math.round((1-loss)*1000)/10 + '%';
+    $('spb-lost').textContent = fmt(total*loss);
+    $('spb-lost-sub').textContent = '총량의 ' + Math.round(loss*1000)/10 + '%';
+    $('spb-note').innerHTML = '공식 — <b>총 반죽 × (1 − 손실률) ÷ 개수</b> = ' + f0(total) + ' × ' + (1-loss).toFixed(2) + ' ÷ ' + f0(cnt) + ' = <b>' + fmt(per) + 'g</b>. 1g 단위로 반올림해 분할하고 마지막 1개로 오차를 맞추세요.';
+  }
+}
+
+function copySplit(){
+  let t = '';
+  if(splitMode === 'fwd'){
+    const per = num($('sp-per')), cnt = num($('sp-cnt')), loss = lossRate($('sp-loss'));
+    const need = cnt > 0 ? per*cnt/(1-loss) : 0;
+    t = '[바른밀 반죽 분할] 개당 ' + fmt(per) + 'g × ' + f0(cnt) + '개\n';
+    t += '• 손실률 ' + Math.round(loss*1000)/10 + '% 반영 → 쳐야 할 반죽 ' + fmt(need) + 'g\n';
+    t += '• 완제품 ' + fmt(per*cnt) + 'g / 손실 ' + fmt(need - per*cnt) + 'g';
+  } else {
+    const total = num($('spb-total')), cnt = num($('spb-cnt')), loss = lossRate($('spb-loss'));
+    const per = cnt > 0 ? total*(1-loss)/cnt : 0;
+    t = '[바른밀 반죽 분할] 총 반죽 ' + f0(total) + 'g → ' + f0(cnt) + '개\n';
+    t += '• 손실률 ' + Math.round(loss*1000)/10 + '% 반영 → 개당 ' + fmt(per) + 'g\n';
+    t += '• 완제품 합계 ' + fmt(total*(1-loss)) + 'g / 손실 ' + fmt(total*loss) + 'g';
+  }
+  copyText(t, '반죽 분할 결과가 복사되었습니다!');
+}
+
+/* ================= 3. 르방 피딩 ================= */
+const LV_ORDER = ['1:1:1','1:2:2','1:3:3','1:5:5','1:10:10'];
+const LV_DATA = {
+  '1:1:1': {
+    a:1, b:1, c:1, sub:'빠름 · 당일', hrs:3.5, acid:4,
+    flavor:'종균 비율이 가장 높아 가장 빨리 시어집니다. 산미가 또렷하고 각진 편이라 밀 향은 뒤로 물러나고, 르방은 금방 힘을 잃습니다.',
+    use:'급하게 종균을 늘릴 때 · 당일 리프레시 · 하루 안에 다 쓸 소량 반죽'
+  },
+  '1:2:2': {
+    a:1, b:2, c:2, sub:'당일 · 소량', hrs:4.5, acid:4,
+    flavor:'1:1:1보다 조금 여유 있는 비율. 산미는 여전히 또렷하지만 밀 향이 살짝 올라오고 피크도 조금 더 길게 유지됩니다.',
+    use:'오후에 피딩해 저녁에 쓰는 당일 제빵 · 소량 배합'
+  },
+  '1:3:3': {
+    a:1, b:3, c:3, sub:'데일리 · 균형', hrs:6, acid:3,
+    flavor:'구수한 단맛과 부드러운 산미가 균형을 이루는 표준 비율. 산미가 과하게 튀지 않아 어떤 빵에도 무난하게 얹힙니다.',
+    use:'매일 같은 시간 피딩하는 데일리 리프레시 · 일반 본반죽'
+  },
+  '1:5:5': {
+    a:1, b:5, c:5, sub:'밤새 · 크리미', hrs:9, acid:2,
+    flavor:'종균 비율이 낮아 산미가 순해지고, 유산균이 만드는 크리미한 맛과 밀 향·단맛이 중심이 됩니다. 저녁에 피딩해 아침에 쓰기 좋습니다.',
+    use:'밤새 발효 · 오버나이트 본반죽 · 식빵·스콘처럼 산미를 줄이고 싶은 빵'
+  },
+  '1:10:10': {
+    a:1, b:10, c:10, sub:'장시간 · 순함', hrs:12, acid:1,
+    flavor:'가장 순한 비율. 산미는 거의 느껴지지 않고 밀가루 향과 은은한 단맛이 앞에 섭니다. 대신 종균의 힘이 약해져 발효력은 떨어집니다.',
+    use:'여름철 높은 실온 · 아침 일찍 쓸 때 · 산미를 싫어하는 식빵·페이스트리'
+  }
+};
+let lvIdx = 3;       // 1:5:5
+let lvTemp = 25;
+
+function lvHours(key, temp){
+  return LV_DATA[key].hrs * Math.pow(2,(25-temp)/10);
+}
+function lvTrim(n){ return (Math.abs(n - Math.round(n)) < 0.01) ? String(Math.round(n)) : n.toFixed(1); }
+function lvRange(key, temp){
+  const h = lvHours(key, temp);
+  let lo = Math.round(h*0.85*2)/2, hi = Math.round(h*1.15*2)/2;
+  if(hi <= lo) hi = lo + 0.5;
+  return {lo:lo, hi:hi, text:'약 ' + lvTrim(lo) + '~' + lvTrim(hi) + '시간'};
+}
+
+function renderLvRatios(){
+  const box = $('lv-ratios'); box.innerHTML = '';
+  LV_ORDER.forEach(function(k, i){
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'rbtn' + (i===lvIdx ? ' on' : '');
+    b.innerHTML = k + '<small>' + LV_DATA[k].sub + '</small>';
+    b.onclick = function(){ lvIdx = i; renderLvRatios(); calcLevain(); };
+    box.appendChild(b);
+  });
+}
+
+function setLvTemp(t, idx){
+  lvTemp = t;
+  pick('lv-temp-seg', idx);
+  calcLevain();
+}
+
+function peakAtIndex(key, temp){
+  const h = lvHours(key, temp);
+  const v = $('lv-start').value || '20:00';
+  const p = v.split(':');
+  const d = new Date();
+  d.setHours(Number(p[0])||0, Number(p[1])||0, 0, 0);
+  d.setMinutes(d.getMinutes() + Math.round(h*60));
+  const now = new Date();
+  const dayDiff = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
+  const label = dayDiff === 0 ? '오늘' : dayDiff === 1 ? '내일' : dayDiff === 2 ? '모레' : (dayDiff > 0 ? dayDiff + '일 뒤' : '');
+  const hh = String(d.getHours()).padStart(2,'0');
+  const mm = String(d.getMinutes()).padStart(2,'0');
+  return (label ? label + ' ' : '') + hh + ':' + mm;
+}
+
+function renderLvTable(){
+  let html = '<tr><th>비율</th><th>22°C</th><th>25°C</th><th>28°C</th></tr>';
+  LV_ORDER.forEach(function(k, i){
+    const on = (i === lvIdx) ? ' class="on"' : '';
+    html += '<tr' + on + '><td>' + k + '</td>';
+    [22,25,28].forEach(function(t){
+      html += '<td>' + lvRange(k,t).text.replace('약 ','').replace('시간','h') + '</td>';
+    });
+    html += '</tr>';
+  });
+  $('lv-tbl').innerHTML = html;
+}
+
+function calcLevain(){
+  const key = LV_ORDER[lvIdx];
+  const d = LV_DATA[key];
+  const total = num($('lv-total'));
+  const parts = d.a + d.b + d.c;
+  const unit = parts > 0 ? total/parts : 0;
+  const starter = unit*d.a, flour = unit*d.b, water = unit*d.c;
+
+  $('lv-starter').textContent = fmt(starter);
+  $('lv-flour').textContent = fmt(flour);
+  $('lv-water').textContent = fmt(water);
+  $('lv-water-sub').textContent = lvTemp + '°C 전후';
+
+  const range = lvRange(key, lvTemp);
+  let stars = '';
+  for(let i=0;i<5;i++) stars += (i < d.acid) ? '★' : '☆';
+
+  $('lv-prof').innerHTML =
+    '<div class="ptop">' +
+      '<span class="ptag">피크 ' + range.text + ' · ' + lvTemp + '°C</span>' +
+      '<span class="pacid">산미 ' + stars + '</span>' +
+    '</div>' +
+    '<div class="pflav"><b>풍미</b> ' + d.flavor + '</div>' +
+    '<div class="puse"><b>추천</b> ' + d.use + '</div>';
+
+  $('lv-peak').textContent = range.text;
+  $('lv-peak-at').textContent = peakAtIndex(key, lvTemp) + '경';
+  $('lv-temp-hint').textContent = lvTemp + '°C 기준';
+  renderLvTable();
+}
+
+function copyLevain(){
+  const key = LV_ORDER[lvIdx];
+  const d = LV_DATA[key];
+  const total = num($('lv-total'));
+  const unit = total/(d.a+d.b+d.c);
+  const range = lvRange(key, lvTemp);
+  const start = $('lv-start').value || '20:00';
+  let t = '[바른밀 르방 피딩] ' + key + ' · 총 ' + fmt(total) + 'g\n';
+  t += '• 종균 ' + fmt(unit*d.a) + 'g + 밀가루 ' + fmt(unit*d.b) + 'g + 물 ' + fmt(unit*d.c) + 'g\n';
+  t += '• ' + lvTemp + '°C 기준 피크 ' + range.text + ' (' + start + ' 피딩 → ' + peakAtIndex(key, lvTemp) + '경)\n';
+  t += '• ' + d.sub + ' — ' + d.use;
+  copyText(t, '르방 피딩 결과가 복사되었습니다!');
+}
+
+/* ================= 4. 물온도(DDT) + 얼음 ================= */
+let ddtMode = 3;     // 3요소 / 4요소
+let iceKind = 0;     // 0 = 0°C 얼음, 1 = -18°C 냉동 얼음
+let ddtTemp = {room:26, flour:24, friction:8, lev:24};
+
+function setDdtMode(n, idx){
+  ddtMode = n;
+  pick('ddt-mode-seg', idx);
+  $('ddt-levain-row').style.display = n===4 ? 'flex' : 'none';
+  calcDdt();
+}
+
+function renderDdtPresets(){
+  const fb = $('ddt-friction-presets'); fb.innerHTML='';
+  const pl = document.createElement('span'); pl.className='pl'; pl.textContent='마찰계수'; fb.appendChild(pl);
+  [{n:'핸드 6',v:6},{n:'가정용 스탠드 8',v:8},{n:'업소용 12',v:12}].forEach(function(p){
+    const b = document.createElement('button'); b.type='button'; b.textContent = p.n;
+    b.onclick = function(){ $('ddt-friction').value = p.v; calcDdt(); };
+    fb.appendChild(b);
+  });
+
+  const ib = $('ice-kind-presets'); ib.innerHTML='';
+  const pl2 = document.createElement('span'); pl2.className='pl'; pl2.textContent='얼음'; ib.appendChild(pl2);
+  [{n:'0°C 얼음',v:0},{n:'-18°C 냉동 얼음',v:1}].forEach(function(p){
+    const b = document.createElement('button'); b.type='button'; b.textContent = p.n;
+    b.dataset.kind = p.v;
+    b.className = (iceKind === p.v) ? 'on' : '';
+    b.onclick = function(){ iceKind = p.v; renderDdtPresets(); calcDdt(); };
+    ib.appendChild(b);
+  });
+}
+
+function calcDdt(){
+  const target = num($('ddt-target'));
+  const room = num($('ddt-room'));
+  const flour = num($('ddt-flour'));
+  const friction = num($('ddt-friction'));
+  const lev = num($('ddt-lev'));
+  ddtTemp = {room:room, flour:flour, friction:friction, lev:lev};
+
+  let wt, expr;
+  if(ddtMode === 4){
+    wt = (target*4) - (room + flour + lev + friction);
+    expr = '(' + fmt(target) + ' × 4) − (실내 ' + fmt(room) + ' + 밀가루 ' + fmt(flour) + ' + 르방 ' + fmt(lev) + ' + 마찰 ' + fmt(friction) + ')';
+  } else {
+    wt = (target*3) - (room + flour + friction);
+    expr = '(' + fmt(target) + ' × 3) − (실내 ' + fmt(room) + ' + 밀가루 ' + fmt(flour) + ' + 마찰 ' + fmt(friction) + ')';
+  }
+  wt = Math.round(wt*10)/10;
+
+  $('ddt-out').textContent = wt.toFixed(1);
+  $('ddt-formula').innerHTML = '필요 물온도 = ' + expr + ' = <b>' + wt.toFixed(1) + '°C</b>';
+
+  let status = '';
+  const tapNow = num($('ice-tap'));
+  if(wt >= 45) status = '⚠️ 너무 뜨거움 — 이스트 사멸';
+  else if(wt > 35) status = '⚠️ 온수 필요 (40°C 이하)';
+  else if(wt > tapNow + 0.5) status = '수돗물보다 ' + (wt-tapNow).toFixed(1) + '°C 높음 — 데운 물';
+  else if(wt >= 15) status = '찬물·냉수 사용';
+  else if(wt >= 0) status = '🧊 얼음물 필요';
+  else status = '🧊 얼음으로도 부족';
+  $('ddt-status').textContent = status;
+
+  calcIce(wt);
+}
+
+function calcIce(wt){
+  if(wt === undefined) wt = parseFloat($('ddt-out').textContent) || 0;
+  const W = num($('ice-water'));
+  const tap = num($('ice-tap'));
+  const latent = (iceKind === 1) ? 89 : 80;   // 80 + 9(-18°C 얼음 예열)
+  const iceLabel = (iceKind === 1) ? '-18°C 얼음' : '0°C 얼음';
+
+  let ice = 0, water = W;
+
+  if(W <= 0){
+    $('ice-out').textContent = '0';
+    $('water-out').textContent = '0';
+    $('ice-out-sub').textContent = '물 무게를 입력하세요';
+    $('ice-note').innerHTML = '총 물 무게를 입력하면 얼음과 물로 나눠 드립니다.';
+    return;
+  }
+
+  if(wt >= tap){
+    ice = 0; water = W;
+    $('ice-out').textContent = '0';
+    $('water-out').textContent = f0(W);
+    $('ice-out-sub').textContent = '불필요';
+    $('water-out-sub').textContent = '수돗물 ' + fmt(tap) + '°C';
+    if(wt > tap){
+      $('ice-note').innerHTML = '필요 물온도 <b>' + wt.toFixed(1) + '°C</b>가 수돗물(' + fmt(tap) + '°C)보다 <b>' + (wt-tap).toFixed(1) + '°C 높습니다</b> — 얼음은 필요 없고, 물 ' + f0(W) + 'g을 <b>' + wt.toFixed(1) + '°C</b>로 데워 쓰세요.';
+    } else {
+      $('ice-note').innerHTML = '필요 물온도가 수돗물과 같습니다 — <b>얼음 없이 물 ' + f0(W) + 'g</b>을 그대로 쓰면 됩니다.';
+    }
+    return;
+  }
+
+  const x = W*(tap - wt)/(tap + latent);
+  if(x >= W){
+    ice = W; water = 0;
+  } else {
+    ice = Math.round(x);
+    water = W - ice;
+  }
+  const pct = W > 0 ? Math.round(ice/W*100) : 0;
+
+  $('ice-out').textContent = f0(ice);
+  $('water-out').textContent = f0(water);
+  $('ice-out-sub').textContent = '전체의 ' + pct + '%';
+  $('water-out-sub').textContent = '수돗물 ' + fmt(tap) + '°C';
+
+  if(x >= W){
+    const minDough = ddtMode === 4
+      ? (0 + ddtTemp.room + ddtTemp.flour + ddtTemp.lev + ddtTemp.friction)/4
+      : (0 + ddtTemp.room + ddtTemp.flour + ddtTemp.friction)/3;
+    $('ice-note').innerHTML = '⚠️ 필요 물온도가 <b>0°C 아래</b>라 얼음만으로는 맞출 수 없습니다. 0°C 얼음물을 100% 써도 반죽은 약 <b>' + minDough.toFixed(1) + '°C</b>까지만 내려갑니다. 밀가루·르방을 냉장 보관하고 실온을 낮추거나, DDT를 조금 높여 잡으세요.';
+  } else {
+    $('ice-note').innerHTML = '물 ' + f0(W) + 'g = <b>얼음 ' + f0(ice) + 'g + 물 ' + f0(water) + 'g</b>. 공식 ' + f0(W) + ' × (' + fmt(tap) + ' − ' + wt.toFixed(1) + ') ÷ (' + fmt(tap) + ' + ' + latent + ') = ' + Math.round(x) + 'g (' + iceLabel + '). 얼음은 완전히 녹인 뒤 투입하세요.';
+  }
+}
+
+function copyDdt(){
+  const target = num($('ddt-target'));
+  const wt = parseFloat($('ddt-out').textContent) || 0;
+  const W = num($('ice-water'));
+  const tap = num($('ice-tap'));
+  const ice = num({value:$('ice-out').textContent});
+  const water = num({value:$('water-out').textContent});
+  let t = '[바른밀 물온도] DDT ' + fmt(target) + '°C · ' + (ddtMode===4?'4요소(르방 포함)':'3요소') + '\n';
+  t += '• 필요 물온도 ' + wt.toFixed(1) + '°C (실내 ' + fmt(ddtTemp.room) + ' + 밀가루 ' + fmt(ddtTemp.flour) + (ddtMode===4?' + 르방 ' + fmt(ddtTemp.lev):'') + ' + 마찰 ' + fmt(ddtTemp.friction) + ')\n';
+  if(ice > 0){
+    t += '• 물 ' + f0(W) + 'g → 얼음 ' + f0(ice) + 'g + 물 ' + f0(water) + 'g (' + (iceKind===1?'-18°C 얼음':'0°C 얼음') + ', 수돗물 ' + fmt(tap) + '°C)\n';
+    t += '• 얼음은 완전히 녹인 뒤 반죽에 투입';
+  } else {
+    t += '• 물 ' + f0(W) + 'g을 ' + wt.toFixed(1) + '°C로 맞춰 사용 (얼음 불필요)';
+  }
+  copyText(t, '물온도·얼음 결과가 복사되었습니다!');
+}
+
+/* ---------- 초기화 ---------- */
+(function init(){
+  renderPanPresets();
+  renderSplitPresets();
+  renderLvRatios();
+  renderDdtPresets();
+  calcPan();
+  calcSplit();
+  calcLevain();
+  calcDdt();
+})();
+</script>
+</body>
+</html>
