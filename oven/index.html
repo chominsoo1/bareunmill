@@ -425,9 +425,9 @@ function calcConv(){
   const dT2 = tTemp && T ? (tTemp - T) : 0;
   const dTime = tTime && t ? (tTime - Math.round(t)) : 0;
 
-  $('r-temp-s').textContent = (srcOven === tgtOven) ? '보정 없음' : (sign(Math.round(dT2)) + '°C');
-  $('r-pre-s').textContent  = (tTemp && pre < round5(tTemp + g.pre)) ? '최대 ' + preCap + '°C' : ('+' + g.pre + '°C 예열');
-  $('r-time-s').textContent = (srcOven === tgtOven) ? '그대로' : (dTime === 0 ? '변화 없음' : sign(dTime) + '분');
+  $('r-temp-s').textContent = (srcOven === tgtOven) ? '보정 없음' : ('레시피 ' + sign(Math.round(dT2)) + '°C');
+  $('r-pre-s').textContent  = (tTemp && pre < round5(tTemp + g.pre)) ? '최대 ' + preCap + '°C' : ('예열 +' + g.pre + '°C');
+  $('r-time-s').textContent = (srcOven === tgtOven) ? '그대로' : (dTime === 0 ? '변화 없음' : '레시피 ' + sign(dTime) + '분');
 
   /* 데크 상·하불 분리 */
   if(tgtOven === 'deck' && tTemp){
