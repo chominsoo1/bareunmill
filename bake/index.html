@@ -918,7 +918,9 @@ function copyDdt(){
   const water = num({value:$('water-out').textContent});
   let t = '[바른밀 물온도] DDT ' + fmt(target) + '°C · ' + (ddtMode===4?'4요소(르방 포함)':'3요소') + '\n';
   t += '• 필요 물온도 ' + wt.toFixed(1) + '°C (실내 ' + fmt(ddtTemp.room) + ' + 밀가루 ' + fmt(ddtTemp.flour) + (ddtMode===4?' + 르방 ' + fmt(ddtTemp.lev):'') + ' + 마찰 ' + fmt(ddtTemp.friction) + ')\n';
-  if(ice > 0){
+  if(wt < 0){
+    t += '• ⚠️ 필요 물온도가 0°C 아래 — 0°C 얼음물을 100% 써도 부족합니다. 밀가루·르방 냉장 보관, 실온 낮추기, DDT 상향 중 하나로 조정하세요';
+  } else if(ice > 0){
     t += '• 물 ' + f0(W) + 'g → 얼음 ' + f0(ice) + 'g + 물 ' + f0(water) + 'g (' + (iceKind===1?'-18°C 얼음':'0°C 얼음') + ', 수돗물 ' + fmt(tap) + '°C)\n';
     t += '• 얼음은 완전히 녹인 뒤 반죽에 투입';
   } else {
