@@ -369,8 +369,8 @@
     </div>
     <div class="presets" id="ice-kind-presets"></div>
     <div class="res" style="margin:8px 0 0">
-      <div class="rbox hot"><div class="rl">얼음</div><div class="rv"><span id="ice-out">45</span><small>g</small></div><div class="rs" id="ice-out-sub">전체의 6%</div></div>
-      <div class="rbox"><div class="rl">상온 물</div><div class="rv"><span id="water-out">655</span><small>g</small></div><div class="rs" id="water-out-sub">수돗물 20°C</div></div>
+      <div class="rbox hot"><div class="rl">얼음</div><div class="rv"><span id="ice-out">42</span><small>g</small></div><div class="rs" id="ice-out-sub">전체의 6%</div></div>
+      <div class="rbox"><div class="rl">상온 물</div><div class="rv"><span id="water-out">658</span><small>g</small></div><div class="rs" id="water-out-sub">수돗물 20°C</div></div>
     </div>
   </div>
 
@@ -843,7 +843,8 @@ function calcDdt(){
   if(wt >= 45) status = '⚠️ 너무 뜨거움 — 이스트 사멸';
   else if(wt > 35) status = '⚠️ 온수 필요 (40°C 이하)';
   else if(wt > tapNow + 0.5) status = '수돗물보다 ' + (wt-tapNow).toFixed(1) + '°C 높음 — 데운 물';
-  else if(wt >= 15) status = '찬물·냉수 사용';
+  else if(wt >= tapNow - 0.5) status = '상온수 그대로 사용';
+  else if(wt >= 12) status = '찬물·냉수 사용';
   else if(wt >= 0) status = '🧊 얼음물 필요';
   else status = '🧊 얼음으로도 부족';
   $('ddt-status').textContent = status;
@@ -868,6 +869,18 @@ function calcIce(wt){
     return;
   }
 
+  if(wt < 0){
+    const minDough = ddtMode === 4
+      ? (0 + ddtTemp.room + ddtTemp.flour + ddtTemp.lev + ddtTemp.friction)/4
+      : (0 + ddtTemp.room + ddtTemp.flour + ddtTemp.friction)/3;
+    $('ice-out').textContent = f0(W);
+    $('water-out').textContent = '0';
+    $('ice-out-sub').textContent = '전체 얼음(최대)';
+    $('water-out-sub').textContent = '수돗물 ' + fmt(tap) + '°C';
+    $('ice-note').innerHTML = '⚠️ 필요 물온도가 <b>0°C 아래</b>라 얼음만으로는 맞출 수 없습니다. 0°C 얼음물을 100% 써도 반죽은 약 <b>' + minDough.toFixed(1) + '°C</b>까지만 내려갑니다. 밀가루·르방을 냉장 보관하고 실온을 낮추거나 DDT를 조금 높여 잡으세요.';
+    return;
+  }
+
   if(wt >= tap){
     ice = 0; water = W;
     $('ice-out').textContent = '0';
@@ -883,12 +896,8 @@ function calcIce(wt){
   }
 
   const x = W*(tap - wt)/(tap + latent);
-  if(x >= W){
-    ice = W; water = 0;
-  } else {
-    ice = Math.round(x);
-    water = W - ice;
-  }
+  ice = Math.round(x);
+  water = W - ice;
   const pct = W > 0 ? Math.round(ice/W*100) : 0;
 
   $('ice-out').textContent = f0(ice);
@@ -896,14 +905,7 @@ function calcIce(wt){
   $('ice-out-sub').textContent = '전체의 ' + pct + '%';
   $('water-out-sub').textContent = '수돗물 ' + fmt(tap) + '°C';
 
-  if(x >= W){
-    const minDough = ddtMode === 4
-      ? (0 + ddtTemp.room + ddtTemp.flour + ddtTemp.lev + ddtTemp.friction)/4
-      : (0 + ddtTemp.room + ddtTemp.flour + ddtTemp.friction)/3;
-    $('ice-note').innerHTML = '⚠️ 필요 물온도가 <b>0°C 아래</b>라 얼음만으로는 맞출 수 없습니다. 0°C 얼음물을 100% 써도 반죽은 약 <b>' + minDough.toFixed(1) + '°C</b>까지만 내려갑니다. 밀가루·르방을 냉장 보관하고 실온을 낮추거나, DDT를 조금 높여 잡으세요.';
-  } else {
-    $('ice-note').innerHTML = '물 ' + f0(W) + 'g = <b>얼음 ' + f0(ice) + 'g + 물 ' + f0(water) + 'g</b>. 공식 ' + f0(W) + ' × (' + fmt(tap) + ' − ' + wt.toFixed(1) + ') ÷ (' + fmt(tap) + ' + ' + latent + ') = ' + Math.round(x) + 'g (' + iceLabel + '). 얼음은 완전히 녹인 뒤 투입하세요.';
-  }
+  $('ice-note').innerHTML = '물 ' + f0(W) + 'g = <b>얼음 ' + f0(ice) + 'g + 물 ' + f0(water) + 'g</b>. 공식 ' + f0(W) + ' × (' + fmt(tap) + ' − ' + wt.toFixed(1) + ') ÷ (' + fmt(tap) + ' + ' + latent + ') = ' + Math.round(x) + 'g (' + iceLabel + '). 얼음은 완전히 녹인 뒤 투입하세요.';
 }
 
 function copyDdt(){
