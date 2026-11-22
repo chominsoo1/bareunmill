@@ -64,6 +64,13 @@
   .tip{font-size:10.8px;color:var(--amber-t);background:var(--amber);border:1px solid var(--amber-b);border-radius:8px;padding:7px 9px;margin-bottom:7px;line-height:1.5}
   .tip b{font-weight:800}
 
+  .stor{padding:7px 0;border-bottom:1px dashed #F0E6DA;font-size:11.5px;color:var(--sub);line-height:1.5}
+  .stor:last-child{border-bottom:0;padding-bottom:2px}
+  .stor-t{font-size:12px;font-weight:800;color:var(--primary-dark)}
+  .stor-v{margin-top:2px}
+  .stor-w{font-size:10.8px;color:var(--muted);margin-top:2px}
+  .stor b{color:var(--primary-dark);font-weight:800}
+
   .copy{display:block;width:100%;border:0;background:var(--primary-dark);color:#fff;border-radius:11px;padding:11px;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer}
   .copy:active{opacity:.88}
 
@@ -189,9 +196,23 @@
 
   <div class="note" id="yeast-note"></div>
   <div class="tip">
-    🧊 <b>생이스트</b>는 미지근한 물에 풀어 사용하고 냉장 유통기한이 짧아요(2~3주).<br>
+    🧊 <b>생이스트</b>는 미지근한 물에 풀어 사용하고 냉장 유통기한이 짧아요(미개봉 3~5주).<br>
     🥣 <b>활성 드라이</b>는 38~40°C 미지근한 물에 5~10분 불려(예비발효) 사용하세요.<br>
     🍞 <b>인스턴트</b>는 예비발효 없이 밀가루에 바로 섞고, 소금·액체와 직접 닿지 않게 넣습니다.
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>🧊 이스트 보관법 &amp; 유통기한</span><span class="hint">현장 기준</span></div>
+    <div class="stor">
+      <div class="stor-t">생이스트(압착) · 냉장 0~4°C</div>
+      <div class="stor-v">미개봉 <b>3~5주(약 1달)</b> · 개봉 후 밀폐해 <b>1~2주 내</b> 사용</div>
+      <div class="stor-w">✕ 냉동 보관 금지 — 얼면 효모 세포가 손상됩니다</div>
+    </div>
+    <div class="stor">
+      <div class="stor-t">인스턴트 · 활성 드라이 · 밀폐 냉동 -18°C</div>
+      <div class="stor-v">개봉 후 밀폐 냉동하면 <b>6개월~1년 이상</b> 유지</div>
+      <div class="stor-w">덜어낸 직후 바로 재밀봉 — 결로(물방울)가 생기면 발효력이 떨어집니다</div>
+    </div>
   </div>
   <button class="copy" onclick="copyYeast()">📋 결과 복사하기</button>
 </section>
