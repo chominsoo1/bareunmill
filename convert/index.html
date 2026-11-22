@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제빵 재료 만능 환산기 | 바른밀제빵소</title>
+<meta name="description" content="우유↔탈지분유, 이스트 3종, 버터↔오일, 생크림, 설탕↔꿀·물엿, 달걀, 밀가루 조합, 버터밀크까지 — 제빵 현장 재료 8가지 환산기입니다.">
+<meta property="og:title" content="제빵 재료 만능 환산기 🥐">
+<meta property="og:description" content="바른밀제빵소 제빵 현장 재료 환산기 8종 — 우유·이스트·버터·생크림·설탕·달걀·밀가루·버터밀크">
+<meta property="og:type" content="website">
+<style>
+  :root{
+    --bg:#F8F5F0; --card:#FFFFFF; --primary:#965B28; --primary-light:#EFE6DC; --primary-dark:#643914;
+    --text:#241D17; --sub:#665B52; --muted:#9E948C; --border:#E8DFD5;
+    --amber:#FFF9ED; --amber-b:#F3E0B5; --amber-t:#7A5E2E;
+    --font:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font);-webkit-tap-highlight-color:transparent}
+  body{background:var(--bg);color:var(--text);line-height:1.45;font-size:14px;padding:12px 12px 24px;max-width:560px;margin:0 auto}
+
+  header{text-align:center;margin-bottom:10px}
+  .badge{display:inline-block;background:var(--primary-light);color:var(--primary-dark);font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;margin-bottom:5px}
+  h1{font-size:20px;font-weight:800;letter-spacing:-.6px;color:var(--primary-dark)}
+  .hdesc{font-size:11.5px;color:var(--sub);margin-top:2px}
+
+  .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+  .tab{background:#fff;border:1px solid var(--border);border-radius:12px;padding:7px 2px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;color:var(--sub);transition:background .15s,color .15s,border-color .15s}
+  .tab .em{font-size:15px;line-height:1.2}
+  .tab .nm{font-size:10.5px;font-weight:800;letter-spacing:-.2px;white-space:nowrap}
+  .tab.on{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;box-shadow:0 2px 6px rgba(40,25,10,.04);margin-bottom:9px}
+  .lab{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--primary-dark);margin-bottom:7px}
+  .lab .hint{font-size:10.5px;font-weight:600;color:var(--muted);white-space:nowrap}
+  .subtle{font-size:11px;color:var(--muted);margin-top:2px}
+
+  .seg{display:flex;background:#EFEBE5;border-radius:10px;padding:3px;gap:3px}
+  .seg button{flex:1;border:0;background:transparent;border-radius:8px;padding:7px 3px;font-size:12.5px;font-weight:700;color:var(--sub);font-family:inherit;cursor:pointer;line-height:1.25;transition:background .15s,color .15s}
+  .seg button.on{background:#fff;color:var(--primary-dark);box-shadow:0 1px 3px rgba(40,25,10,.12)}
+  .seg button small{display:block;font-size:9.5px;font-weight:600;color:var(--muted);margin-top:1px}
+  .seg button.on small{color:var(--primary)}
+
+  .irow{display:flex;align-items:center;gap:8px;background:#FCFAF7;border:1px solid var(--border);border-radius:10px;padding:5px 12px;margin-top:8px}
+  .irow input{flex:1;min-width:0;width:100%;border:0;background:transparent;font-size:22px;font-weight:800;color:var(--text);font-family:inherit;outline:none;text-align:right;padding:0;line-height:1.3}
+  .irow .unit{flex:0 0 auto;font-size:12px;font-weight:700;color:var(--muted)}
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+  .presets{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
+  .presets .pl{font-size:10.5px;font-weight:700;color:var(--muted);margin-right:1px}
+  .presets button{border:1px solid var(--border);background:#fff;border-radius:14px;padding:4px 11px;font-size:12px;font-weight:700;color:var(--primary-dark);font-family:inherit;cursor:pointer}
+  .presets button:active{background:var(--primary-light)}
+
+  .res{display:flex;gap:8px;margin-bottom:8px}
+  .rbox{flex:1;min-width:0;background:#fff;border:1px solid var(--border);border-radius:12px;padding:9px 11px}
+  .rbox.hot{background:var(--primary-light);border-color:#E0CDB8}
+  .rl{font-size:11px;font-weight:700;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rbox.hot .rl{color:var(--primary-dark)}
+  .rv{font-size:23px;font-weight:900;color:var(--primary-dark);letter-spacing:-.8px;line-height:1.15;margin-top:1px;white-space:nowrap}
+  .rv small{font-size:11.5px;font-weight:700;color:var(--sub);margin-left:2px;letter-spacing:0}
+  .rs{font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .note{font-size:11px;color:var(--sub);background:#F7F3EC;border-radius:8px;padding:8px 10px;margin-bottom:8px;line-height:1.5}
+  .note b{color:var(--primary-dark)}
+  .tip{font-size:10.8px;color:var(--amber-t);background:var(--amber);border:1px solid var(--amber-b);border-radius:8px;padding:8px 10px;margin-bottom:9px;line-height:1.55}
+  .tip b{font-weight:800}
+
+  .copy{display:block;width:100%;border:0;background:var(--primary-dark);color:#fff;border-radius:12px;padding:12px;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer}
+  .copy:active{opacity:.88}
+
+  .yrow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px dashed #F0E6DA}
+  .yrow:last-child{border-bottom:0;padding-bottom:2px}
+  .yn{flex:1;min-width:0}
+  .yn b{display:block;font-size:13px;font-weight:800}
+  .yn small{display:block;font-size:10px;color:var(--muted);margin-top:1px}
+  .yin{display:flex;align-items:center;gap:3px;flex:0 0 116px;width:116px;background:#FCFAF7;border:1px solid var(--border);border-radius:9px;padding:3px 9px}
+  .yin input{width:100%;min-width:0;border:0;background:transparent;text-align:right;font-size:18px;font-weight:800;font-family:inherit;color:var(--text);outline:none;padding:0}
+  .yin span{font-size:11px;font-weight:700;color:var(--muted)}
+  .yrow.on .yin{border-color:var(--primary);background:#fff}
+  .yrow.on .yn b{color:var(--primary-dark)}
+
+  .duo{display:flex;gap:8px;margin-top:8px}
+  .duo>div{flex:1;min-width:0}
+
+  .pane{display:none}
+  .pane.on{display:block}
+
+  .foot{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+  .foot a{font-size:11.5px;font-weight:700;color:var(--primary-dark);background:#fff;border:1px solid var(--border);border-radius:14px;padding:6px 12px;text-decoration:none}
+  .foot a:active{background:var(--primary-light)}
+
+  #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(90px);background:rgba(36,29,23,.93);color:#fff;padding:10px 18px;border-radius:20px;font-size:12.5px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:99;transition:transform .25s cubic-bezier(.175,.885,.32,1.275);pointer-events:none;white-space:nowrap;max-width:92vw}
+  #toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">🥐 바른밀제빵소 실전 도구</div>
+  <h1>제빵 재료 만능 환산기</h1>
+  <div class="hdesc">현장에서 쓰는 재료 환산 8가지</div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <div class="tab on" id="tab-milk" onclick="setTab('milk')"><span class="em">🥛</span><span class="nm">우유·탈지분유</span></div>
+  <div class="tab" id="tab-yeast" onclick="setTab('yeast')"><span class="em">🍞</span><span class="nm">이스트 3종</span></div>
+  <div class="tab" id="tab-butter" onclick="setTab('butter')"><span class="em">🧈</span><span class="nm">버터·오일</span></div>
+  <div class="tab" id="tab-cream" onclick="setTab('cream')"><span class="em">🍦</span><span class="nm">생크림</span></div>
+  <div class="tab" id="tab-sugar" onclick="setTab('sugar')"><span class="em">🍯</span><span class="nm">설탕·꿀</span></div>
+  <div class="tab" id="tab-egg" onclick="setTab('egg')"><span class="em">🥚</span><span class="nm">달걀</span></div>
+  <div class="tab" id="tab-flour" onclick="setTab('flour')"><span class="em">🌾</span><span class="nm">밀가루</span></div>
+  <div class="tab" id="tab-buttermilk" onclick="setTab('buttermilk')"><span class="em">🥛</span><span class="nm">버터밀크</span></div>
+</nav>
+
+<!-- ============ 1. 우유 ↔ 탈지분유 ============ -->
+<section class="pane on" id="pane-milk">
+  <div class="card" style="padding:9px 9px">
+    <div class="seg" id="milk-mode-seg">
+      <button class="on" onclick="setMilkMode('toSdm',0)">우유 → 탈지분유</button>
+      <button onclick="setMilkMode('toMilk',1)">탈지분유 → 우유</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span id="milk-in-label">우유 무게</span><span class="hint">빠른 입력</span></div>
+    <div class="irow">
+      <input id="milk-in" type="number" inputmode="decimal" value="200" oninput="calcMilk()">
+      <span class="unit">g</span>
+    </div>
+    <div class="presets" id="milk-presets"></div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>환산 비율</span><span class="hint" id="milk-ratio-hint">탈지분유 10% + 물 90%</span></div>
+    <div class="seg" id="milk-ratio-seg">
+      <button class="on" onclick="setMilkRatio(0.10,0)">표준 10%<small>홈베이킹 기본</small></button>
+      <button onclick="setMilkRatio(0.12,1)">진한 12%<small>제빵실 표준</small></button>
+    </div>
+  </div>
+
+  <div class="res">
+    <div class="rbox hot">
+      <div class="rl" id="milk-r1l">탈지분유</div>
+      <div class="rv"><span id="milk-r1">20</span><small>g</small></div>
+      <div class="rs" id="milk-r1s">우유 200g 기준</div>
+    </div>
+    <div class="rbox">
+      <div class="rl" id="milk-r2l">물</div>
+      <div class="rv"><span id="milk-r2">180</span><small>g</small></div>
+      <div class="rs" id="milk-r2s">합계 200g</div>
+    </div>
+  </div>
+
+  <div class="note" id="milk-note"></div>
+  <div class="tip" id="milk-tip"></div>
+  <button class="copy" onclick="copyMilk()">📋 결과 복사하기</button>
+</section>
+
+<!-- ============ 2. 이스트 3종 ============ -->
+<section class="pane" id="pane-yeast">
+  <div class="card" style="padding:9px 9px">
+    <div class="seg" id="yeast-ratio-seg">
+      <button class="on" onclick="setYeastRatio('std',0)">표준 3 : 1<small>생 3 = 인스턴트 1</small></button>
+      <button onclick="setYeastRatio('field',1)">현장 2.5 : 1<small>고당·저온 보정</small></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>어느 칸에 넣어도 자동 환산</span><span class="hint">입력한 칸이 기준</span></div>
+    <div class="yrow on" id="yrow-fresh">
+      <div class="yn"><b>🧊 생이스트</b><small>압착 · 냉장 유통</small></div>
+      <div class="yin"><input id="y-fresh" type="number" inputmode="decimal" oninput="calcYeast('fresh')"><span>g</span></div>
+    </div>
+    <div class="yrow" id="yrow-instant">
+      <div class="yn"><b>🍞 인스턴트 드라이</b><small>고활성 · 바로 투입</small></div>
+      <div class="yin"><input id="y-instant" type="number" inputmode="decimal" value="10" oninput="calcYeast('instant')"><span>g</span></div>
+    </div>
+    <div class="yrow" id="yrow-active">
+      <div class="yn"><b>🥣 활성 드라이</b><small>예비발효 필요</small></div>
+      <div class="yin"><input id="y-active" type="number" inputmode="decimal" oninput="calcYeast('active')"><span>g</span></div>
+    </div>
+    <div class="presets">
+      <span class="pl">빠른 입력 → <b id="yeast-base-name" style="color:var(--primary-dark)">인스턴트</b></span>
+      <button onclick="setYeastPreset(5)">5</button>
+      <button onclick="setYeastPreset(10)">10</button>
+      <button onclick="setYeastPreset(15)">15</button>
+      <button onclick="setYeastPreset(30)">30</button>
+    </div>
+  </div>
+
+  <div class="note" id="yeast-note"></div>
+  <div class="tip">
+    🧊 <b>생이스트</b>는 미지근한 물에 풀어 사용하고 냉장 유통기한이 짧아요(2~3주).<br>
+    🥣 <b>활성 드라이</b>는 38~40°C 미지근한 물에 5~10분 불려(예비발효) 사용하세요.<br>
+    🍞 <b>인스턴트</b>는 예비발효 없이 밀가루에 바로 섞고, 소금·액체와 직접 닿지 않게 넣습니다.
+  </div>
+  <button class="copy" onclick="copyYeast()">📋 결과 복사하기</button>
+</section>
+
+<!-- ============ 3. 버터 ↔ 오일 ============ -->
+<section class="pane" id="pane-butter">
+  <div class="card" style="padding:9px 9px">
+    <div class="seg" id="butter-mode-seg">
+      <button class="on" onclick="setButterMode('toOil',0)">버터 → 오일</button>
+      <button onclick="setButterMode('toButter',1)">오일 → 버터</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span id="butter-in-label">무염버터 무게</span><span class="hint">빠른 입력</span></div>
+    <div class="irow">
+      <input id="butter-in" type="number" inputmode="decimal" value="100" oninput="calcButter()">
+      <span class="unit">g</span>
+    </div>
+    <div class="presets" id="butter-presets"></div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>오일 환산 비율</span><span class="hint">버터 유지방 84% · 수분 16%</span></div>
+    <div class="seg" id="butter-ratio-seg">
+      <button onclick="setButterRatio(0.82,0)">82%<small>단단한 편</small></button>
+      <button class="on" onclick="setButterRatio(0.83,1)">83%<small>추천</small></button>
+      <button onclick="setButterRatio(0.84,2)">84%<small>촉촉한 편</small></button>
+    </div>
+  </div>
+
+  <div class="res">
+    <div class="rbox hot">
+      <div class="rl" id="butter-r1l">식용유</div>
+      <div class="rv"><span id="butter-r1">83</span><small>g</small></div>
+      <div class="rs" id="butter-r1s">버터 100g 기준</div>
+    </div>
+    <div class="rbox">
+      <div class="rl" id="butter-r2l">물·우유 보정</div>
+      <div class="rv"><span id="butter-r2">17</span><small>g</small></div>
+      <div class="rs" id="butter-r2s">같은 무게 유지</div>
+    </div>
+  </div>
+
+  <div class="note" id="butter-note"></div>
+  <div class="tip">
+    🧈 버터는 <b>수분 16% + 유고형분</b>이 있어 지방만 보면 오일의 82~84%예요. 오일로 바꾸면 쿠키는 더 퍼지고 식빵·케이크는 촉촉해지지만 <b>버터 풍미는 빠집니다</b> — 바닐라나 버터향으로 살짝 보완하세요.
+  </div>
+  <button class="copy" onclick="copyButter()">📋 결과 복사하기</button>
+</section>
+
+<!-- ============ 4. 생크림 ↔ 우유+버터 ============ -->
+<section class="pane" id="pane-cream">
+  <div class="card" style="padding:9px 9px">
+    <div class="seg" id="cream-mode-seg">
+      <button class="on" onclick="setCreamMode('toSub',0)">생크림 → 우유+버터</button>
+      <button onclick="setCreamMode('toCream',1)">우유+버터 → 생크림</button>
+    </div>
+  </div>
+
+  <div id="cream-in-card" class="card">
+    <div class="lab"><span>동물성 생크림 무게</span><span class="hint">빠른 입력</span></div>
+    <div class="irow">
+      <input id="cream-in" type="number" inputmode="decimal" value="100" oninput="calcCream()">
+      <span class="unit">g</span>
+    </div>
+    <div class="presets" id="cream-presets"></div>
+  </div>
+
+  <div id="cream-rev-card" class="card" style="display:none">
+    <div class="lab"><span>우유 + 무염버터 무게</span><span class="hint">두 칸 모두 입력</span></div>
+    <div class="duo">
+      <div>
+        <div class="subtle" style="margin:0 0 3px 2px">우유</div>
+        <div class="irow" style="margin-top:0">
+          <input id="cream-milk" type="number" inputmode="decimal" value="65" oninput="calcCream()">
+          <span class="unit">g</span>
+        </div>
+      </div>
+      <div>
+        <div class="subtle" style="margin:0 0 3px 2px">무염버터</div>
+        <div class="irow" style="margin-top:0">
+          <input id="cream-butter" type="number" inputmode="decimal" value="35" oninput="calcCream()">
+          <span class="unit">g</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>생크림 유지방</span><span class="hint">제품 표기 확인</span></div>
+    <div class="seg" id="cream-fat-seg">
+      <button onclick="setCreamFat(0.33,0)">33%<small>라이트</small></button>
+      <button class="on" onclick="setCreamFat(0.35,1)">35%<small>국내 표준</small></button>
+      <button onclick="setCreamFat(0.38,2)">38%<small>휘핑용</small></button>
+    </div>
+  </div>
+
+  <div class="res">
+    <div class="rbox hot">
+      <div class="rl" id="cream-r1l">우유</div>
+      <div class="rv"><span id="cream-r1">65</span><small id="cream-r1u">g</small></div>
+      <div class="rs" id="cream-r1s">생크림 100g 기준</div>
+    </div>
+    <div class="rbox">
+      <div class="rl" id="cream-r2l">무염버터</div>
+      <div class="rv"><span id="cream-r2">35</span><small id="cream-r2u">g</small></div>
+      <div class="rs" id="cream-r2s">지방 35%</div>
+    </div>
+  </div>
+
+  <div class="note" id="cream-note"></div>
+  <div class="tip">
+    ⚠️ <b>휘핑은 안 됩니다.</b> 지방구·유화 구조가 달라 휘핑크림 대체는 불가 — <b>반죽·가나슈·소스·커스터드·버터크림</b> 용도로만 쓰세요.<br>
+    버터는 실온 연화 후 <b>미지근한 우유에 조금씩</b> 풀어야 분리되지 않아요.
+  </div>
+  <button class="copy" onclick="copyCream()">📋 결과 복사하기</button>
+</section>
+
+<!-- ============ 5. 설탕 ↔ 꿀·물엿 ============ -->
+<section class="pane" id="pane-sugar">
+  <div class="card" style="padding:9px 9px">
+    <div class="seg" id="sugar-mode-seg">
+      <button class="on" onclick="setSugarMode('toSyrup',0)">설탕 → 꿀·물엿</button>
+      <button onclick="setSugarMode('toSugar',1)">꿀·물엿 → 설탕</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>대체 재료</span><span class="hint" id="sugar-hint">꿀 80% + 물 20%</span></div>
+    <div class="seg" id="sugar-kind-seg">
+      <button class="on" onclick="setSugarKind('honey',0)">🍯 꿀<small>설탕 80%</small></button>
+      <button onclick="setSugarKind('syrup',1)">🍚 물엿·조청<small>설탕 75%</small></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span id="sugar-in-label">레시피 설탕 무게</span><span class="hint">빠른 입력</span></div>
+    <div class="irow">
+      <input id="sugar-in" type="number" inputmode="decimal" value="100" oninput="calcSugar()">
+      <span class="unit">g</span>
+    </div>
+    <div class="presets" id="sugar-presets"></div>
+  </div>
+
+  <div class="res">
+    <div class="rbox hot">
+      <div class="rl" id="sugar-r1l">꿀</div>
+      <div class="rv"><span id="sugar-r1">125</span><small>g</small></div>
+      <div class="rs" id="sugar-r1s">설탕 100g 대신</div>
+    </div>
+    <div class="rbox">
+      <div class="rl" id="sugar-r2l">물 감량</div>
+      <div class="rv"><span id="sugar-r2">25</span><small>g</small></div>
+      <div class="rs" id="sugar-r2s">본반죽 물에서</div>
+    </div>
+  </div>
+
+  <div class="note" id="sugar-note"></div>
+  <div class="tip" id="sugar-tip"></div>
+  <button class="copy" onclick="copySugar()">📋 결과 복사하기</button>
+</section>
+
+<!-- ============ 6. 달걀 ============ -->
+<section class="pane" id="pane-egg">
+  <div class="card">
+    <div class="lab"><span>개수 ↔ 무게</span><span class="hint">한 칸만 넣어도 자동</span></div>
+    <div class="duo">
+      <div>
+        <div class="subtle" style="margin:0 0 3px 2px">개수</div>
+        <div class="irow" style="margin-top:0">
+          <input id="egg-count" type="number" inputmode="decimal" value="2" oninput="eggFromCount()">
+          <span class="unit">개</span>
+        </div>
+      </div>
+      <div>
+        <div class="subtle" style="margin:0 0 3px 2px">총 무게</div>
+        <div class="irow" style="margin-top:0">
+          <input id="egg-weight" type="number" inputmode="decimal" value="100" oninput="eggFromWeight()">
+          <span class="unit">g</span>
+        </div>
+      </div>
+    </div>
+    <div class="presets">
+      <span class="pl">빠른 입력</span>
+      <button onclick="setEggPreset(1)">1개</button>
+      <button onclick="setEggPreset(2)">2개</button>
+      <button onclick="setEggPreset(3)">3개</button>
+      <button onclick="setEggPreset(4)">4개</button>
+      <button onclick="setEggPreset(6)">6개</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>1개 무게 기준</span><span class="hint">껍질 제외 계란물</span></div>
+    <div class="seg" id="egg-size-seg">
+      <button class="on" onclick="setEggSize(50,0)">특란<small>1개 50g</small></button>
+      <button onclick="setEggSize(45,1)">대란<small>1개 45g</small></button>
+    </div>
+  </div>
+
+  <div class="res">
+    <div class="rbox hot">
+      <div class="rl">노른자 <span style="font-weight:600;color:var(--muted)">약 35%</span></div>
+      <div class="rv"><span id="egg-yolk">35</span><small>g</small></div>
+      <div class="rs" id="egg-yolk-s">계란물 100g 기준</div>
+    </div>
+    <div class="rbox">
+      <div class="rl">흰자 <span style="font-weight:600;color:var(--muted)">약 65%</span></div>
+      <div class="rv"><span id="egg-white">65</span><small>g</small></div>
+      <div class="rs" id="egg-white-s">계란물 100g 기준</div>
+    </div>
+  </div>
+
+  <div class="note" id="egg-note"></div>
+  <div class="tip">
+    🥚 무게는 <b>껍질을 뺀 계란물</b> 기준이에요(특란 껍질 포함 약 60g대).<br>
+    노른자·흰자 비율은 계란마다 조금씩 달라요(노른자 33~36%). 노른자만 쓸 땐 흰자 1개분 무게도 함께 계산해 두면 좋아요.
+  </div>
+  <button class="copy" onclick="copyEgg()">📋 결과 복사하기</button>
+</section>
+
+<!-- ============ 7. 밀가루 조합 ============ -->
+<section class="pane" id="pane-flour">
+  <div class="card">
+    <div class="lab"><span>중력분 만들기</span><span class="hint">강력분 + 박력분</span></div>
+    <div class="irow" style="margin-top:0">
+      <input id="flour-in" type="number" inputmode="decimal" value="200" oninput="calcFlour()">
+      <span class="unit">g</span>
+    </div>
+    <div class="presets" id="flour-presets"></div>
+    <div class="seg" id="flour-ratio-seg" style="margin-top:8px">
+      <button class="on" onclick="setFlourRatio(0.5,0)">50 : 50<small>다목적·식빵</small></button>
+      <button onclick="setFlourRatio(0.4,1)">40 : 60<small>부드러운 제과</small></button>
+    </div>
+  </div>
+
+  <div class="res">
+    <div class="rbox hot">
+      <div class="rl" id="flour-r1l">강력분 50%</div>
+      <div class="rv"><span id="flour-r1">100</span><small>g</small></div>
+      <div class="rs" id="flour-r1s">중력분 200g 기준</div>
+    </div>
+    <div class="rbox">
+      <div class="rl" id="flour-r2l">박력분 50%</div>
+      <div class="rv"><span id="flour-r2">100</span><small>g</small></div>
+      <div class="rs" id="flour-r2s">단백질 ↓ 부드러움</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lab"><span>박력분 대체</span><span class="hint">중력분 + 옥수수전분</span></div>
+    <div class="irow" style="margin-top:0">
+      <input id="cake-in" type="number" inputmode="decimal" value="100" oninput="calcCake()">
+      <span class="unit">g</span>
+    </div>
+    <div class="presets" id="cake-presets"></div>
+  </div>
+
+  <div class="res">
+    <div class="rbox hot">
+      <div class="rl">중력분 86%</div>
+      <div class="rv"><span id="cake-r1">86</span><small>g</small></div>
+      <div class="rs" id="cake-r1s">박력분 100g 대신</div>
+    </div>
+    <div class="rbox">
+      <div class="rl">옥수수전분 14%</div>
+      <div class="rv"><span id="cake-r2">14</span><small>g</small></div>
+      <div class="rs">단백질 희석</div>
+    </div>
+  </div>
+
+  <div class="note">
+    🌾 중력분(단백질 9~10%) = 강력분(12% 전후) + 박력분(8% 전후)을 반씩 섞어 만들 수 있어요.<br>
+    🥣 박력분이 없을 땐 중력분에 <b>옥수수전분 14%</b>를 섞으면 단백질이 희석돼 부드러워집니다.
+  </div>
+  <button class="copy" onclick="copyFlour()">📋 결과 복사하기</button>
+</section>
+
+<!-- ============ 8. 버터밀크 ============ -->
+<section class="pane" id="pane-buttermilk">
+  <div class="card">
+    <div class="lab"><span>필요한 버터밀크 무게</span><span class="hint">빠른 입력</span></div>
+    <div class="irow" style="margin-top:0">
+      <input id="bm-in" type="number" inputmode="decimal" value="200" oninput="calcBm()">
+      <span class="unit">g</span>
+    </div>
+    <div class="presets" id="bm-presets"></div>
+  </div>
+
+  <div class="res">
+    <div class="rbox hot">
+      <div class="rl">우유 95%</div>
+      <div class="rv"><span id="bm-r1">190</span><small>g</small></div>
+      <div class="rs" id="bm-r1s">버터밀크 200g 기준</div>
+    </div>
+    <div class="rbox">
+      <div class="rl">레몬즙·식초 5%</div>
+      <div class="rv"><span id="bm-r2">10</span><small>g</small></div>
+      <div class="rs">산성화</div>
+    </div>
+  </div>
+
+  <div class="note" id="bm-note"></div>
+  <div class="tip">
+    🥛 우유에 레몬즙(또는 사과식초·화이트와인식초)을 넣고 <b>실온에서 10분</b> 두면 살짝 응고·걸쭉해져요 — 저어서 덩어리가 풀리면 완성.<br>
+    ❄️ 차가운 우유보다 <b>실온 우유</b>가 잘 응고되고, 응고 후 바로 쓰지 않으면 냉장 보관하며 그날 안에 사용하세요. 팬케이크·스콘·머핀·프라이드치킨 반죽에 쓰면 부드러워집니다.
+  </div>
+  <button class="copy" onclick="copyBm()">📋 결과 복사하기</button>
+</section>
+
+<div class="foot">
+  <a href="../">🏠 바른밀 링크</a>
+  <a href="../calc/">🍞 베이커스 % 계산기</a>
+  <a href="../order/">🥖 오늘의 빵</a>
+  <a href="https://litt.ly/bareunmill">🔗 공식 프로필</a>
+</div>
+
+<div id="toast">복사되었습니다!</div>
+
+<script>
+/* ---------- 공통 ---------- */
+function $(id){ return document.getElementById(id); }
+function num(el){
+  if(!el) return 0;
+  const v = String(el.value||'').replace(/,/g,'').trim();
+  const f = parseFloat(v);
+  return isFinite(f) ? f : 0;
+}
+function fmt(x){
+  if(!isFinite(x)) return '0';
+  const r = Math.round(x*10)/10;
+  return r.toLocaleString('ko-KR',{maximumFractionDigits:1});
+}
+function raw(x){ return isFinite(x) ? String(Math.round(x*10)/10) : ''; }
+function pick(segId, idx){
+  const el = $(segId);
+  if(!el) return;
+  Array.prototype.forEach.call(el.children, function(b,i){ b.classList.toggle('on', i===idx); });
+}
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ t.classList.remove('show'); }, 1900);
+}
+function legacyCopy(text, msg){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly','');
+  ta.style.position = 'fixed'; ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select(); ta.setSelectionRange(0, ta.value.length);
+  try{ document.execCommand('copy'); toast(msg||'복사되었습니다!'); }
+  catch(e){ toast('복사 실패 — 길게 눌러 선택해 주세요'); }
+  document.body.removeChild(ta);
+}
+function copyText(text, msg){
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(function(){ toast(msg||'복사되었습니다!'); })
+      .catch(function(){ legacyCopy(text,msg); });
+  } else {
+    legacyCopy(text,msg);
+  }
+}
+const TABS = ['milk','yeast','butter','cream','sugar','egg','flour','buttermilk'];
+function setTab(t){
+  TABS.forEach(function(id){
+    $('tab-'+id).classList.toggle('on', id===t);
+    $('pane-'+id).classList.toggle('on', id===t);
+  });
+  window.scrollTo(0,0);
+}
+
+/* ---------- 1. 우유 ↔ 탈지분유 ---------- */
+let milkMode = 'toSdm';
+let milkRatio = 0.10;
+const MILK_PRESETS = { toSdm:[100,200,300,500], toMilk:[5,10,20,30] };
+
+function renderMilkPresets(){
+  const box = $('milk-presets'); box.innerHTML = '';
+  const pl = document.createElement('span');
+  pl.className = 'pl'; pl.textContent = '빠른 입력';
+  box.appendChild(pl);
+  MILK_PRESETS[milkMode].forEach(function(v){
+    const b = document.createElement('button');
+    b.textContent = v;
+    b.onclick = function(){ $('milk-in').value = v; calcMilk(); };
+    box.appendChild(b);
+  });
+}
+function setMilkMode(m, idx){
+  milkMode = m; pick('milk-mode-seg', idx);
+  $('milk-in-label').textContent = (m==='toSdm') ? '우유 무게' : '탈지분유 무게';
+  $('milk-in').value = (m==='toSdm') ? 200 : 10;
+  renderMilkPresets();
+  calcMilk();
+}
+function setMilkRatio(r, idx){
+  milkRatio = r; pick('milk-ratio-seg', idx);
+  $('milk-ratio-hint').textContent = '탈지분유 ' + Math.round(r*100) + '% + 물 ' + Math.round((1-r)*100) + '%';
+  calcMilk();
+}
+function calcMilk(){
+  const v = num($('milk-in'));
+  const pct = Math.round(milkRatio*100);
+  if(milkMode === 'toSdm'){
+    const sdm = v*milkRatio, water = v - sdm;
+    $('milk-r1l').textContent = '탈지분유';
+    $('milk-r2l').textContent = '물';
+    $('milk-r1').textContent = fmt(sdm);
+    $('milk-r2').textContent = fmt(water);
+    $('milk-r1s').textContent = '우유 ' + fmt(v) + 'g의 ' + pct + '%';
+    $('milk-r2s').textContent = '합계 ' + fmt(v) + 'g';
+    $('milk-note').innerHTML = '우유 <b>' + fmt(v) + 'g</b> → 탈지분유 <b>' + fmt(sdm) + 'g</b> + 물 <b>' + fmt(water) + 'g</b>';
+    $('milk-tip').innerHTML = '🍦 <b>유지방 보정:</b> 탈지분유엔 지방이 없어요. 진한 식감·풍미를 원하면 버터 <b>' +
+      fmt(v*0.035) + 'g</b>(우유의 약 3.5%)을 추가하고, 담백하게 가려면 생략하세요.';
+  } else {
+    const milk = v/milkRatio, water = milk - v;
+    $('milk-r1l').textContent = '우유 대체량';
+    $('milk-r2l').textContent = '물에서 빼기';
+    $('milk-r1').textContent = fmt(milk);
+    $('milk-r2').textContent = fmt(water);
+    $('milk-r1s').textContent = '탈지분유 ' + fmt(v) + 'g 대신';
+    $('milk-r2s').textContent = '본반죽 물에서';
+    $('milk-note').innerHTML = '탈지분유 <b>' + fmt(v) + 'g</b>을 빼고 우유 <b>' + fmt(milk) +
+      'g</b>을 넣으세요. 우유에 든 물만큼 반죽 물을 <b>' + fmt(water) + 'g</b> 줄입니다.';
+    $('milk-tip').innerHTML = '💧 <b>주의:</b> 우유로 대체하면 지방·유당이 함께 들어와 식감이 진해져요. 묽어지면 물을 조금 덜 넣고 반죽 상태를 보며 조절하세요.';
+  }
+}
+function copyMilk(){
+  const v = num($('milk-in'));
+  const pct = Math.round(milkRatio*100);
+  let t = '';
+  if(milkMode === 'toSdm'){
+    const sdm = v*milkRatio, water = v - sdm;
+    t = '[바른밀 재료 환산 · 우유 → 탈지분유]\n';
+    t += '• 우유: ' + fmt(v) + ' g\n';
+    t += '• 탈지분유: ' + fmt(sdm) + ' g\n';
+    t += '• 물: ' + fmt(water) + ' g\n';
+    t += '• 비율: 탈지분유 ' + pct + '% + 물 ' + (100-pct) + '%\n';
+    t += '• 유지방 보정: 버터 약 ' + fmt(v*0.035) + ' g (선택)';
+  } else {
+    const milk = v/milkRatio, water = milk - v;
+    t = '[바른밀 재료 환산 · 탈지분유 → 우유]\n';
+    t += '• 탈지분유: ' + fmt(v) + ' g\n';
+    t += '• 우유 대체량: ' + fmt(milk) + ' g\n';
+    t += '• 본반죽 물에서 빼기: ' + fmt(water) + ' g\n';
+    t += '• 비율: 탈지분유 ' + pct + '% 기준';
+  }
+  copyText(t, '우유 환산 결과가 복사되었습니다!');
+}
+
+/* ---------- 2. 이스트 3종 ---------- */
+const YEAST_FACTOR = {
+  std:   { fresh:3,   instant:1, active:1.25 },
+  field: { fresh:2.5, instant:1, active:1.25 }
+};
+const YEAST_NAME = { fresh:'생이스트', instant:'인스턴트', active:'활성 드라이' };
+let yeastRatio = 'std';
+let yeastBase = 'instant';
+
+function calcYeast(src){
+  if(src) yeastBase = src;
+  const f = YEAST_FACTOR[yeastRatio];
+  const val = num($('y-' + yeastBase));
+  const inst = val / f[yeastBase];
+  ['fresh','instant','active'].forEach(function(k){
+    if(k !== yeastBase) $('y-' + k).value = val > 0 ? raw(inst * f[k]) : '';
+    $('yrow-' + k).classList.toggle('on', k === yeastBase);
+  });
+  $('yeast-base-name').textContent = YEAST_NAME[yeastBase];
+  $('yeast-note').innerHTML = yeastRatio === 'std'
+    ? '표준 비율 — 생이스트 <b>3</b> = 인스턴트 <b>1</b> = 활성 드라이 <b>1.25</b>'
+    : '현장 보정 — 생이스트 <b>2.5</b> = 인스턴트 <b>1</b> (발효력이 약해졌거나 고당·저온 반죽)';
+}
+function setYeastRatio(r, idx){
+  yeastRatio = r; pick('yeast-ratio-seg', idx); calcYeast();
+}
+function setYeastPreset(v){
+  $('y-' + yeastBase).value = v; calcYeast();
+}
+function copyYeast(){
+  const f = YEAST_FACTOR[yeastRatio];
+  const inst = num($('y-instant'));
+  let t = '[바른밀 재료 환산 · 이스트]\n';
+  t += '• 비율: ' + (yeastRatio === 'std' ? '표준 3 : 1' : '현장 보정 2.5 : 1') + '\n';
+  t += '• 생이스트(압착): ' + fmt(inst * f.fresh) + ' g\n';
+  t += '• 인스턴트 드라이: ' + fmt(inst) + ' g\n';
+  t += '• 활성 드라이: ' + fmt(inst * f.active) + ' g';
+  copyText(t, '이스트 환산 결과가 복사되었습니다!');
+}
+
+/* ---------- 3. 버터 ↔ 오일 ---------- */
+let butterMode = 'toOil';
+let butterRatio = 0.83;
+const BUTTER_PRESETS = { toOil:[50,100,200,300], toButter:[50,80,100,150] };
+
+function renderButterPresets(){
+  const box = $('butter-presets'); box.innerHTML = '';
+  const pl = document.createElement('span');
+  pl.className = 'pl'; pl.textContent = '빠른 입력';
+  box.appendChild(pl);
+  BUTTER_PRESETS[butterMode].forEach(function(v){
+    const b = document.createElement('button');
+    b.textContent = v;
+    b.onclick = function(){ $('butter-in').value = v; calcButter(); };
+    box.appendChild(b);
+  });
+}
+function setButterMode(m, idx){
+  butterMode = m; pick('butter-mode-seg', idx);
+  $('butter-in-label').textContent = (m==='toOil') ? '무염버터 무게' : '식용유 무게';
+  $('butter-in').value = (m==='toOil') ? 100 : 80;
+  $('butter-r1l').textContent = (m==='toOil') ? '식용유' : '무염버터';
+  $('butter-r2l').textContent = (m==='toOil') ? '물·우유 보정' : '물에서 빼기';
+  renderButterPresets();
+  calcButter();
+}
+function setButterRatio(r, idx){
+  butterRatio = r; pick('butter-ratio-seg', idx); calcButter();
+}
+function calcButter(){
+  const v = num($('butter-in'));
+  const pctTxt = Math.round(butterRatio*100) + '%';
+  if(butterMode === 'toOil'){
+    const oil = v*butterRatio, water = v - oil;
+    $('butter-r1').textContent = fmt(oil);
+    $('butter-r2').textContent = fmt(water);
+    $('butter-r1s').textContent = '버터 ' + fmt(v) + 'g × ' + pctTxt;
+    $('butter-r2s').textContent = '물 또는 우유로';
+    $('butter-note').innerHTML = '버터 <b>' + fmt(v) + 'g</b> → 오일 <b>' + fmt(oil) + 'g</b> + 물·우유 <b>' +
+      fmt(water) + 'g</b> (지방 ' + pctTxt + ' 기준)';
+  } else {
+    const butter = v/butterRatio, water = butter - v;
+    $('butter-r1').textContent = fmt(butter);
+    $('butter-r2').textContent = fmt(water);
+    $('butter-r1s').textContent = '오일 ' + fmt(v) + 'g ÷ ' + pctTxt;
+    $('butter-r2s').textContent = '본반죽 물에서';
+    $('butter-note').innerHTML = '오일 <b>' + fmt(v) + 'g</b> → 무염버터 <b>' + fmt(butter) +
+      'g</b>. 버터에 든 물만큼 반죽 물을 <b>' + fmt(water) + 'g</b> 줄이세요.';
+  }
+}
+function copyButter(){
+  const v = num($('butter-in'));
+  const pctTxt = Math.round(butterRatio*100) + '%';
+  let t = '';
+  if(butterMode === 'toOil'){
+    const oil = v*butterRatio, water = v - oil;
+    t = '[바른밀 재료 환산 · 버터 → 오일]\n';
+    t += '• 무염버터: ' + fmt(v) + ' g\n';
+    t += '• 식용유(포도씨유 등): ' + fmt(oil) + ' g\n';
+    t += '• 물 또는 우유 보정: ' + fmt(water) + ' g\n';
+    t += '• 지방 환산: ' + pctTxt;
+  } else {
+    const butter = v/butterRatio, water = butter - v;
+    t = '[바른밀 재료 환산 · 오일 → 버터]\n';
+    t += '• 식용유: ' + fmt(v) + ' g\n';
+    t += '• 무염버터: ' + fmt(butter) + ' g\n';
+    t += '• 본반죽 물에서 빼기: ' + fmt(water) + ' g\n';
+    t += '• 지방 환산: ' + pctTxt;
+  }
+  copyText(t, '버터 환산 결과가 복사되었습니다!');
+}
+
+/* ---------- 4. 생크림 ↔ 우유+버터 ---------- */
+let creamMode = 'toSub';
+let creamFat = 0.35;
+const CREAM_PRESETS = [50,100,200,300];
+
+function renderCreamPresets(){
+  const box = $('cream-presets'); box.innerHTML = '';
+  const pl = document.createElement('span');
+  pl.className = 'pl'; pl.textContent = '빠른 입력';
+  box.appendChild(pl);
+  CREAM_PRESETS.forEach(function(v){
+    const b = document.createElement('button');
+    b.textContent = v;
+    b.onclick = function(){ $('cream-in').value = v; calcCream(); };
+    box.appendChild(b);
+  });
+}
+function setCreamMode(m, idx){
+  creamMode = m; pick('cream-mode-seg', idx);
+  $('cream-in-card').style.display = (m==='toSub') ? '' : 'none';
+  $('cream-rev-card').style.display = (m==='toSub') ? 'none' : '';
+  $('cream-r1l').textContent = (m==='toSub') ? '우유' : '생크림 상당';
+  $('cream-r2l').textContent = (m==='toSub') ? '무염버터' : '유지방';
+  $('cream-r1u').textContent = 'g';
+  $('cream-r2u').textContent = (m==='toSub') ? 'g' : '%';
+  calcCream();
+}
+function setCreamFat(f, idx){
+  creamFat = f; pick('cream-fat-seg', idx); calcCream();
+}
+function calcCream(){
+  const fatPct = Math.round(creamFat*100);
+  if(creamMode === 'toSub'){
+    const v = num($('cream-in'));
+    const butter = v*creamFat, milk = v - butter;
+    $('cream-r1').textContent = fmt(milk);
+    $('cream-r2').textContent = fmt(butter);
+    $('cream-r1s').textContent = '생크림 ' + fmt(v) + 'g 기준';
+    $('cream-r2s').textContent = '지방 ' + fatPct + '%';
+    $('cream-note').innerHTML = '생크림 <b>' + fmt(v) + 'g</b> ≈ 우유 <b>' + fmt(milk) + 'g</b> + 무염버터 <b>' +
+      fmt(butter) + 'g</b> (유지방 ' + fatPct + '% 기준)';
+  } else {
+    const milk = num($('cream-milk')), butter = num($('cream-butter'));
+    const total = milk + butter;
+    const fat = total > 0 ? (butter/total)*100 : 0;
+    $('cream-r1').textContent = fmt(total);
+    $('cream-r2').textContent = total > 0 ? fmt(fat) : '0';
+    $('cream-r1s').textContent = '우유 ' + fmt(milk) + 'g + 버터 ' + fmt(butter) + 'g';
+    $('cream-r2s').textContent = '생크림 환산 지방률';
+    $('cream-note').innerHTML = '우유 <b>' + fmt(milk) + 'g</b> + 무염버터 <b>' + fmt(butter) +
+      'g</b> ≈ 생크림 <b>' + fmt(total) + 'g</b> (유지방 약 ' + fmt(fat) + '%)';
+  }
+}
+function copyCream(){
+  let t = '';
+  if(creamMode === 'toSub'){
+    const v = num($('cream-in'));
+    const butter = v*creamFat, milk = v - butter;
+    t = '[바른밀 재료 환산 · 생크림 → 우유+버터]\n';
+    t += '• 동물성 생크림: ' + fmt(v) + ' g (유지방 ' + Math.round(creamFat*100) + '%)\n';
+    t += '• 우유: ' + fmt(milk) + ' g\n';
+    t += '• 무염버터: ' + fmt(butter) + ' g\n';
+    t += '• 휘핑 불가 — 반죽·가나슈·소스용';
+  } else {
+    const milk = num($('cream-milk')), butter = num($('cream-butter'));
+    const total = milk + butter;
+    const fat = total > 0 ? (butter/total)*100 : 0;
+    t = '[바른밀 재료 환산 · 우유+버터 → 생크림]\n';
+    t += '• 우유: ' + fmt(milk) + ' g\n';
+    t += '• 무염버터: ' + fmt(butter) + ' g\n';
+    t += '• 생크림 상당: ' + fmt(total) + ' g (유지방 약 ' + fmt(fat) + '%)\n';
+    t += '• 휘핑 불가 — 반죽·가나슈·소스용';
+  }
+  copyText(t, '생크림 환산 결과가 복사되었습니다!');
+}
+
+/* ---------- 5. 설탕 ↔ 꿀·물엿 ---------- */
+let sugarMode = 'toSyrup';
+let sugarKind = 'honey';
+const SUGAR_FACTOR = { honey:0.80, syrup:0.75 };
+const SUGAR_NAME = { honey:'꿀', syrup:'물엿·조청' };
+const SUGAR_PRESETS = [50,100,200,300];
+
+function renderSugarPresets(){
+  const box = $('sugar-presets'); box.innerHTML = '';
+  const pl = document.createElement('span');
+  pl.className = 'pl'; pl.textContent = '빠른 입력';
+  box.appendChild(pl);
+  SUGAR_PRESETS.forEach(function(v){
+    const b = document.createElement('button');
+    b.textContent = v;
+    b.onclick = function(){ $('sugar-in').value = v; calcSugar(); };
+    box.appendChild(b);
+  });
+}
+function setSugarMode(m, idx){
+  sugarMode = m; pick('sugar-mode-seg', idx);
+  $('sugar-in-label').textContent = (m==='toSyrup') ? '레시피 설탕 무게' : SUGAR_NAME[sugarKind] + ' 무게';
+  $('sugar-in').value = 100;
+  $('sugar-r1l').textContent = (m==='toSyrup') ? SUGAR_NAME[sugarKind] : '설탕 상당';
+  $('sugar-r2l').textContent = (m==='toSyrup') ? '물 감량' : '들어있는 물';
+  calcSugar();
+}
+function setSugarKind(k, idx){
+  sugarKind = k; pick('sugar-kind-seg', idx);
+  $('sugar-hint').textContent = (k==='honey') ? '꿀 80% + 물 20%' : '물엿 75% + 물 25%';
+  if(sugarMode === 'toSyrup') $('sugar-r1l').textContent = SUGAR_NAME[k];
+  $('sugar-in-label').textContent = (sugarMode==='toSyrup') ? '레시피 설탕 무게' : SUGAR_NAME[k] + ' 무게';
+  calcSugar();
+}
+function calcSugar(){
+  const v = num($('sugar-in'));
+  const f = SUGAR_FACTOR[sugarKind];
+  const nm = SUGAR_NAME[sugarKind];
+  if(sugarMode === 'toSyrup'){
+    const syrup = v / f, water = syrup - v;
+    $('sugar-r1').textContent = fmt(syrup);
+    $('sugar-r2').textContent = fmt(water);
+    $('sugar-r1s').textContent = '설탕 ' + fmt(v) + 'g 대신';
+    $('sugar-r2s').textContent = '본반죽 물에서';
+    $('sugar-note').innerHTML = '설탕 <b>' + fmt(v) + 'g</b> → ' + nm + ' <b>' + fmt(syrup) +
+      'g</b>, 물 <b>' + fmt(water) + 'g</b> 줄이기 (' + nm + ' ' + Math.round(f*100) + '% + 물 ' + Math.round((1-f)*100) + '% 기준)';
+  } else {
+    const sugar = v * f, water = v - sugar;
+    $('sugar-r1').textContent = fmt(sugar);
+    $('sugar-r2').textContent = fmt(water);
+    $('sugar-r1s').textContent = nm + ' ' + fmt(v) + 'g 기준';
+    $('sugar-r2s').textContent = nm + ' 안의 수분';
+    $('sugar-note').innerHTML = nm + ' <b>' + fmt(v) + 'g</b> ≈ 설탕 <b>' + fmt(sugar) + 'g</b> + 물 <b>' + fmt(water) + 'g</b>';
+  }
+  $('sugar-tip').innerHTML = (sugarKind === 'honey')
+    ? '🔥 <b>구움색 주의:</b> 꿀은 과당이 많아 갈색이 빨리 나요. 오븐 온도를 <b>10°C 낮추고</b> 시간을 조금 늘리세요. 꿀은 흡습성·향이 강하고 설탕보다 단맛이 진해(약 1.2~1.3배) 너무 달면 꿀 양을 10% 줄여보세요.'
+    : '🍚 <b>감미도 차이:</b> 물엿은 설탕보다 단맛이 약해요(제품에 따라 설탕의 40~60% 수준). 대체하면 단맛이 옅어지니 설탕을 일부 남기거나 소금·바닐라로 보완하세요. 대신 촉촉함과 노화 지연 효과가 있어요.';
+}
+function copySugar(){
+  const v = num($('sugar-in'));
+  const f = SUGAR_FACTOR[sugarKind];
+  const nm = SUGAR_NAME[sugarKind];
+  let t = '';
+  if(sugarMode === 'toSyrup'){
+    const syrup = v / f, water = syrup - v;
+    t = '[바른밀 재료 환산 · 설탕 → ' + nm + ']\n';
+    t += '• 설탕: ' + fmt(v) + ' g\n';
+    t += '• ' + nm + ': ' + fmt(syrup) + ' g\n';
+    t += '• 본반죽 물에서 빼기: ' + fmt(water) + ' g\n';
+    t += '• 팁: ' + (sugarKind === 'honey' ? '구움색이 빨라 오븐 10°C 낮추기' : '단맛이 약해 설탕 일부 병행');
+  } else {
+    const sugar = v * f, water = v - sugar;
+    t = '[바른밀 재료 환산 · ' + nm + ' → 설탕]\n';
+    t += '• ' + nm + ': ' + fmt(v) + ' g\n';
+    t += '• 설탕 상당: ' + fmt(sugar) + ' g\n';
+    t += '• 들어있는 물: ' + fmt(water) + ' g';
+  }
+  copyText(t, '설탕 환산 결과가 복사되었습니다!');
+}
+
+/* ---------- 6. 달걀 ---------- */
+let eggSize = 50;
+
+function eggParts(total){
+  $('egg-yolk').textContent = fmt(total*0.35);
+  $('egg-white').textContent = fmt(total*0.65);
+  $('egg-yolk-s').textContent = '계란물 ' + fmt(total) + 'g 기준';
+  $('egg-white-s').textContent = '계란물 ' + fmt(total) + 'g 기준';
+  $('egg-note').innerHTML = '달걀 <b>' + fmt(num($('egg-count'))) + '개</b> = 계란물 <b>' + fmt(total) +
+    'g</b> → 노른자 ' + fmt(total*0.35) + 'g + 흰자 ' + fmt(total*0.65) + 'g';
+}
+function eggFromCount(){
+  const c = num($('egg-count'));
+  const w = c * eggSize;
+  $('egg-weight').value = c > 0 ? raw(w) : '';
+  eggParts(w);
+}
+function eggFromWeight(){
+  const w = num($('egg-weight'));
+  $('egg-count').value = w > 0 ? raw(w/eggSize) : '';
+  eggParts(w);
+}
+function setEggSize(s, idx){
+  eggSize = s; pick('egg-size-seg', idx);
+  const c = num($('egg-count'));
+  if(c > 0) eggFromCount(); else eggFromWeight();
+}
+function setEggPreset(n){
+  $('egg-count').value = n; eggFromCount();
+}
+function copyEgg(){
+  const c = num($('egg-count')), w = num($('egg-weight'));
+  let t = '[바른밀 재료 환산 · 달걀]\n';
+  t += '• 달걀: ' + fmt(c) + '개 / ' + fmt(w) + ' g (' + (eggSize===50?'특란':'대란') + ' 1개 ' + eggSize + 'g, 껍질 제외)\n';
+  t += '• 노른자(약 35%): ' + fmt(w*0.35) + ' g\n';
+  t += '• 흰자(약 65%): ' + fmt(w*0.65) + ' g';
+  copyText(t, '달걀 환산 결과가 복사되었습니다!');
+}
+
+/* ---------- 7. 밀가루 조합 ---------- */
+let flourRatio = 0.5;
+const FLOUR_PRESETS = [100,200,500,1000];
+
+function renderFlourPresets(){
+  const box = $('flour-presets'); box.innerHTML = '';
+  const pl = document.createElement('span');
+  pl.className = 'pl'; pl.textContent = '빠른 입력';
+  box.appendChild(pl);
+  FLOUR_PRESETS.forEach(function(v){
+    const b = document.createElement('button');
+    b.textContent = v;
+    b.onclick = function(){ $('flour-in').value = v; calcFlour(); };
+    box.appendChild(b);
+  });
+}
+function setFlourRatio(r, idx){
+  flourRatio = r; pick('flour-ratio-seg', idx); calcFlour();
+}
+function calcFlour(){
+  const v = num($('flour-in'));
+  const s = Math.round(flourRatio*100), o = 100 - s;
+  $('flour-r1l').textContent = '강력분 ' + s + '%';
+  $('flour-r2l').textContent = '박력분 ' + o + '%';
+  $('flour-r1').textContent = fmt(v*flourRatio);
+  $('flour-r2').textContent = fmt(v*(1-flourRatio));
+  $('flour-r1s').textContent = '중력분 ' + fmt(v) + 'g 기준';
+  $('flour-r2s').textContent = '단백질 ↓ 부드러움';
+}
+function renderCakePresets(){
+  const box = $('cake-presets'); box.innerHTML = '';
+  const pl = document.createElement('span');
+  pl.className = 'pl'; pl.textContent = '빠른 입력';
+  box.appendChild(pl);
+  FLOUR_PRESETS.forEach(function(v){
+    const b = document.createElement('button');
+    b.textContent = v;
+    b.onclick = function(){ $('cake-in').value = v; calcCake(); };
+    box.appendChild(b);
+  });
+}
+function calcCake(){
+  const v = num($('cake-in'));
+  $('cake-r1').textContent = fmt(v*0.86);
+  $('cake-r2').textContent = fmt(v*0.14);
+  $('cake-r1s').textContent = '박력분 ' + fmt(v) + 'g 대신';
+}
+function copyFlour(){
+  const fv = num($('flour-in')), cv = num($('cake-in'));
+  const s = Math.round(flourRatio*100), o = 100 - s;
+  let t = '[바른밀 재료 환산 · 중력분 만들기]\n';
+  t += '• 필요 중력분: ' + fmt(fv) + ' g\n';
+  t += '• 강력분 ' + s + '%: ' + fmt(fv*flourRatio) + ' g\n';
+  t += '• 박력분 ' + o + '%: ' + fmt(fv*(1-flourRatio)) + ' g\n';
+  t += '\n[바른밀 재료 환산 · 박력분 대체]\n';
+  t += '• 필요 박력분: ' + fmt(cv) + ' g\n';
+  t += '• 중력분 86%: ' + fmt(cv*0.86) + ' g\n';
+  t += '• 옥수수전분 14%: ' + fmt(cv*0.14) + ' g';
+  copyText(t, '밀가루 환산 결과가 복사되었습니다!');
+}
+
+/* ---------- 8. 버터밀크 ---------- */
+const BM_PRESETS = [100,200,300,500];
+function renderBmPresets(){
+  const box = $('bm-presets'); box.innerHTML = '';
+  const pl = document.createElement('span');
+  pl.className = 'pl'; pl.textContent = '빠른 입력';
+  box.appendChild(pl);
+  BM_PRESETS.forEach(function(v){
+    const b = document.createElement('button');
+    b.textContent = v;
+    b.onclick = function(){ $('bm-in').value = v; calcBm(); };
+    box.appendChild(b);
+  });
+}
+function calcBm(){
+  const v = num($('bm-in'));
+  const milk = v*0.95, acid = v*0.05;
+  $('bm-r1').textContent = fmt(milk);
+  $('bm-r2').textContent = fmt(acid);
+  $('bm-r1s').textContent = '버터밀크 ' + fmt(v) + 'g 기준';
+  $('bm-note').innerHTML = '버터밀크 <b>' + fmt(v) + 'g</b> → 우유 <b>' + fmt(milk) + 'g</b> + 레몬즙(또는 식초) <b>' + fmt(acid) + 'g</b>';
+}
+function copyBm(){
+  const v = num($('bm-in'));
+  let t = '[바른밀 재료 환산 · 버터밀크]\n';
+  t += '• 필요한 버터밀크: ' + fmt(v) + ' g\n';
+  t += '• 우유: ' + fmt(v*0.95) + ' g\n';
+  t += '• 레몬즙 또는 식초: ' + fmt(v*0.05) + ' g\n';
+  t += '• 실온 10분 응고 후 저어서 사용';
+  copyText(t, '버터밀크 환산 결과가 복사되었습니다!');
+}
+
+/* ---------- 초기화 ---------- */
+(function init(){
+  renderMilkPresets();
+  renderButterPresets();
+  renderCreamPresets();
+  renderSugarPresets();
+  renderFlourPresets();
+  renderCakePresets();
+  renderBmPresets();
+  calcMilk();
+  calcYeast('instant');
+  calcButter();
+  calcCream();
+  calcSugar();
+  eggParts(100);
+  calcFlour();
+  calcCake();
+  calcBm();
+})();
+</script>
+</body>
+</html>
