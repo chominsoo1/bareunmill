@@ -402,8 +402,18 @@ panel.addEventListener("click", function (e) {
 });
 
 // 시작 상태: 주소 뒤 #이름으로 바로 열 수 있어요 (포장 봉투 QR 대응)
-const startKey = decodeURIComponent((location.hash || "").replace("#", ""));
+function hashKey() { return decodeURIComponent((location.hash || "").replace("#", "")); }
+const startKey = hashKey();
 if (BREADS[startKey]) state.bread = startKey;
+
+window.addEventListener("hashchange", function () {
+  const k = hashKey();
+  if (BREADS[k] && k !== state.bread) {
+    state.bread = k;
+    renderPicker();
+    renderPanel();
+  }
+});
 
 renderPicker();
 renderPanel();
